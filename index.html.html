@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            text-align: center;
+            margin-top: 50px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .qr-header, .qr-body, .qr-footer {
+            margin-bottom: 20px;
+        }
+
+        .qr-code {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .qr-code p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .section-selector {
+            margin-bottom: 20px;
+        }
+
+        .section-selector input {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .section-selector label {
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .qr-body {
+            display: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .qr-body.active {
+            display: flex;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group input, .input-group select, .input-group button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .input-group button {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .input-group button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="section-selector">
+            <input type="radio" id="gs-section" name="section" value="gs" checked>
+            <label for="gs-section">GS</label>
+
+            <input type="radio" id="54-section" name="section" value="54">
+            <label for="54-section">54</label>
+
+            <input type="radio" id="51-section" name="section" value="51">
+            <label for="51-section">51</label>
+        </div>
+
+        <div id="gs" class="qr-body active">
+            <!-- GS QR Code Container -->
+        </div>
+
+        <div id="54" class="qr-body">
+            <!-- 54 QR Code Container -->
+        </div>
+
+        <div id="51" class="qr-body">
+            <!-- 51 QR Code Container -->
+        </div>
+
+        <div class="input-group">
+            <input id="qr-text" type="text" placeholder="QR code text">
+            <select id="sizes">
+                <optgroup label="GS">
+                    <option value="2406080000000000000004E10I00000 BC3900800 04000310258917000024">bleed screw</option>
+                    <option value="2406080000000000000004E10I00000 BC MISS 04000310258917000024">CKD seal piston</option>
+                    <option value="2406080000000000000004E10I00000 BC38002400 04000310258917000024">LOCAL SEAL PISTON</option>
+                    <option value="2406080000000000000004E10I00000 BCMISS 04000310258917000024">BOOT PISTON</option>
+                    <option value="2406080000000000000004E10I00000 BC30202100 04000310258917000024">PISTON</option>
+                    <option value="2406080000000000000004E10I00000 BC43101300 04000310258917000024">54 GUIDE ROD A</option>
+                    <option value="2406080000000000000004E10I00000 BC44101300 04000310258917000024">54 GUIDE ROD B</option>
+                    <option value="2406080000000000000004E10I00000 BC45000700 04000310258917000024">BOOT GUIDE</option>
+                    <option value="2406080000000000000004E10I00000 BCMISS 04000310258917000024">RETURN SPRING</option>
+                    <option value="2406080000000000000004E10I00000 BCMISS 04000310258917000024">SPRING PAD</option>
+                    <option value="2406080000000000000004E10I00000 BCMISS 04000310258917000024">BLEED SCREW CAP</option>
+                    <option value="2406080000000000000004E10I00000 BC46000400 04000310258917000024">BOLT</option>
+                    <option value="2406080000000000000004E10I00000 BM38002100 04000310258917000024">PROTECTIVE PLUG</option>
+                </optgroup>
+                <optgroup label="54">
+                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-1</option>
+                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-2</option>
+                </optgroup>
+                <optgroup label="51">
+                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 51-1</option>
+                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 51-2</option>
+                </optgroup>
+            </select> 
+            <input type="radio" id="choose-one" name="generate-option" value="one" checked>
+            <label for="choose-one">Generate QR Code for Selected Option</label>
+            <input type="radio" id="choose-all" name="generate-option" value="all">
+            <label for="choose-all">Generate QR Codes for All Options</label>
+            <button onclick="generateQRCodes()">Generate QR Codes</button>
+        </div>
+    </div>
+
+    <script>
+        function getDateTwoDaysBefore() {
+            const today = new Date();
+            today.setDate(today.getDate() - 2);
+            const year = today.getFullYear().toString().slice(2); // Get last two digits of the year
+            const month = ('0' + (today.getMonth() + 1)).slice(-2); // Months are zero based, so add 1
+            const day = ('0' + today.getDate()).slice(-2);
+            return year + month + day;
+        }
+
+        function generateQRCode(text, size) {
+            const qrContent = text + " " + size;
+            const qrCodeContainer = document.createElement('div');
+            qrCodeContainer.classList.add('qr-code');
+
+            new QRCode(qrCodeContainer, {
+                text: qrContent,
+                width: 256, // Adjust width to make the QR code larger
+                height: 256, // Adjust height to make the QR code larger
+            });
+
+            const qrLabel = document.createElement('p');
+            qrLabel.textContent = size;
+            qrCodeContainer.appendChild(qrLabel);
+
+            return qrCodeContainer;
+        }
+
+        function generateQRCodes() {
+            const qrText = document.getElementById("qr-text").value;
+            const dropdown = document.getElementById("sizes");
+            const generateOption = document.querySelector('input[name="generate-option"]:checked').value;
+            const activeSectionId = document.querySelector('input[name="section"]:checked').value;
+            const qrCodesContainer = document.getElementById(activeSectionId);
+
+            qrCodesContainer.innerHTML = ""; // Clear previous QR codes
+
+            if (generateOption === "one") {
+                const selectedOption = dropdown.options[dropdown.selectedIndex];
+                const originalValue = selectedOption.value;
+                const qrSize = getDateTwoDaysBefore() + "-" + originalValue;
+                const qrCodeElement = generateQRCode(qrText, qrSize);
+                qrCodesContainer.appendChild(qrCodeElement);
+            } else if (generateOption === "all") {
+                Array.from(dropdown.options).forEach(option => {
+                    const originalValue = option.value;
+                    const qrSize = getDateTwoDaysBefore() + "-" + originalValue;
+                    const qrCodeElement = generateQRCode(qrText, qrSize);
+                    qrCodesContainer.appendChild(qrCodeElement);
+                });
+            }
+        }
+
+        function toggleSectionVisibility(sectionId) {
+            const sections = document.querySelectorAll('.qr-body');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.add('active'); // Show selected section
+                } else {
+                    section.classList.remove('active'); // Hide other sections
+                }
+            });
+        }
+
+        document.querySelectorAll('input[name="section"]').forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                toggleSectionVisibility(event.target.value);
+            });
+        });
+
+        window.onload = () => {
+            toggleSectionVisibility(document.querySelector('input[name="section"]:checked').value);
+        }
+    </script>
+</body>
+</html>
