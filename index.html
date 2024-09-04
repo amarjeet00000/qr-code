@@ -6,66 +6,26 @@
     <title>Generate QR Code</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
         }
 
         .box {
             text-align: center;
-            margin-top: 50px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             max-width: 800px;
-            margin: 20px auto;
-        }
-
-        .qr-header, .qr-body, .qr-footer {
-            margin-bottom: 20px;
-        }
-
-        .qr-code {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .qr-code p {
-            margin: 0;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .section-selector {
-            margin-bottom: 20px;
-        }
-
-        .section-selector input {
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        .section-selector label {
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .qr-body {
-            display: none;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .qr-body.active {
-            display: flex;
+            width: 100%;
+            margin-top: 20px; /* Ensure there's space above the box */
         }
 
         .input-group {
@@ -80,7 +40,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
             font-size: 16px;
-            width: 80%;
+            width: 100%;
             max-width: 300px;
         }
 
@@ -93,158 +53,141 @@
         .input-group button:hover {
             background-color: #555;
         }
+
+        .qr-code {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .qr-code p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #qr-codes-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px; /* Ensure there's space below the QR codes */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .input-group input, .input-group select, .input-group button {
+                max-width: 100%;
+            }
+
+            .qr-code {
+                width: 100%;
+            }
+
+            body {
+                padding: 10px;
+                height: auto;
+            }
+
+            .box {
+                width: 100%;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="qr-codes-container"></div> <!-- QR Codes Container at the Top -->
+    
     <div class="box">
-        <div class="section-selector">
-            <input type="radio" id="gs-section" name="section" value="gs" checked>
-            <label for="gs-section">GS</label>
-
-            <input type="radio" id="54-section" name="section" value="54">
-            <label for="54-section">54</label>
-
-            <input type="radio" id="51-section" name="section" value="51">
-            <label for="51-section">51</label>
-        </div>
-
-        <div id="gs" class="qr-body active">
-            <!-- GS QR Code Container -->
-        </div>
-
-        <div id="54" class="qr-body">
-            <!-- 54 QR Code Container -->
-        </div>
-
-        <div id="51" class="qr-body">
-            <!-- 51 QR Code Container -->
-        </div>
-
         <div class="input-group">
             <input id="qr-text" type="text" placeholder="QR code text">
             <select id="sizes">
                 <optgroup label="GS">
-                    <option value="000000000002.04.202400000BC3900080002500110269320000400">bleed screw</option>
-                    <option value="0000000000000004E10I000004BC586104000310258917000024">CKD seal piston</option>
-                    <option value="00000020231108-6001200000BC3800240001000110269237000250">LOCAL SEAL PISTON</option>
-                    <option value="00000001046811-A,B,C00000BC4500070003600110268209000200">BOOT PISTON</option>
-                    <option value="0000000000000004E10I00000BC3020210004000310258917000024">PISTON</option>
-                    <option value="0000000000000122642500000BC4310130001900210269875000300">54 GUIDE ROD A</option>
-                    <option value="0000000000000002202400000BC4410130001300110270067000300">54 GUIDE ROD B</option>
-                    <option value="00000001048413-A,B,C00000BC4500070002400110270870000200">BOOT GUIDE</option>
-                    
-                    <option value="[)>06:ASMWD2718961:PGSP2:PD:PNBC470B0500:RVB:QT00000100:PO:DM060524:SP :LTTEV_00:DS060524:EX*"> SP2I SPRING PAD</option>
-                    <option value="[)>06:ASMWD2718172:PGSK3:PD:PNBC47028900:RVG:QT00000100:PO:DM040624:SP :LTTFQ_00:DS040624:EX*">QXI SPRING PAD</option>
-                    <option value="0000000000000004E10I00000BC3910050004000310258917000024">BLEED SCREW CAP</option>
-                    <option value="0000000000024050071000000BC4600040002000110270533000800">BOLT</option>
-                    <option value="0000000000000004E10I00000BM3800210004000310258917000024">PROTECTIVE PLUG</option>
-                    <option value="000000000001042697-A00000BC4420070000400210258745001000">54 bush</option>
-               
-                
-                
-                
+                    <option value="P10311001010800BC39000800F240206-6001000250">bleed screw</option>
+                    <option value="P10311001010800BC58610400F240206-6001000250">CKD seal piston</option>
+                    <option value="P10311001010800BC38002400F240206-6001000250">LOCAL SEAL PISTON</option>
+                    <option value="P10311001010800BC45000700F240206-6001000250">BOOT PISTON</option>
+                    <option value="P10311001010800BC30202100F240206-6001000250">PISTON</option>
+                    <option value="P10311001010800BC43101300F240206-6001000250">54 GUIDE ROD A</option>
+                    <option value="P10311001010800BC44101300F240206-6001000250">54 GUIDE ROD B</option>
+                    <option value="P10311001010800BC45000700F240206-6001000250">BOOT GUIDE</option>
+                    <option value="P10311001010800BC470B0500F240206-6001000250">SP2I SPRING PAD</option>
+                    <option value="P10311001010800BC47028900F240206-6001000250">QXI SPRING PAD</option>
+                    <option value="P10311001010800BC39100500F240206-6001000250">BLEED SCREW CAP</option>
+                    <option value="P10311001010800BC46000400F240206-6001000250">BOLT</option>
+                    <option value="P10311001010800BM38002100F240206-6001000250">PROTECTIVE PLUG</option>
+                    <option value="P10311001010800BC44200700F240206-6001000250">54 bush</option>
                 </optgroup>
                 <optgroup label="51">
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 51-seal piston</option>
-                    <option value="0000000000000004E10I00000BC3600080004000310258917000024">Option 51-BA Boot piston</option>
-                    <option value="0000000000000004E10I00000BC4702840004000310258917000024">Option 51-AH2 SPRING PAD</option>
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 52-BA SPRING PAD</option>
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 51-BUSH</option>
-                    <option value="0000000000000004E10I00000BC5600390004000310258917000024">BA RETURN SPRING</option>
-                    <option value="0000000000000004E10I00000BC4310140004000310258917000024">A </option>
-                    <option value="0000000000000004E10I00000BC4410150004000310258917000024">B </option>
-                    <option value="0000000000000004E10I00000BC3020760004000310258917000024">BA piston</option>
-                    <option value="0000000000000004E10I00000BC4500080004000310258917000024">BA boot guide rod</option>
-                    <option value="0000000000000004E10I00000BC4420080004000310258917000024">BA Bush</option>
-                    <option value="0000000000000004E10I00000BC 04000310258917000024">null</option>
-                     
-                    
+                    <option value="P10311001010800BC38002800F240206-6001000250">Option 51-seal piston</option>
+                    <option value="P10311001010800BC36000800F240206-6001000250">Option 51-BA Boot piston</option>
+                    <option value="P10311001010800BC47028400F240206-6001000250">Option 51-AH2 SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F240206-6001000250">Option 52-BA SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F240206-6001000250">Option 51-BUSH</option>
+                    <option value="P10311001010800BC56003900F240206-6001000250">BA RETURN SPRING</option>
+                    <option value="P10311001010800BC43101400F240206-6001000250">A</option>
+                    <option value="P10311001010800BC44101500F240206-6001000250">B</option>
+                    <option value="P10311001010800BC30207600F240206-6001000250">BA piston</option>
+                    <option value="P10311001010800BC45000800F240206-6001000250">BA boot guide rod</option>
+                    <option value="P10311001010800BC44200800F240206-6001000250">BA Bush</option>
                 </optgroup>
                 <optgroup label="54">
                     <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-1</option>
                     <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-2</option>
                 </optgroup>
-            </select> 
-            <input type="radio" id="choose-one" name="generate-option" value="one" checked>
-            <label for="choose-one">Generate QR Code for Selected Option</label>
-            <input type="radio" id="choose-all" name="generate-option" value="all">
-            <label for="choose-all">Generate QR Codes for All Options</label>
-            <button onclick="generateQRCodes()">Generate QR Codes</button>
+            </select>
+            <button onclick="generateSingleQRCode()">Generate Single QR Code</button>
+            <button onclick="generateAllQRCodes()">Generate All QR Codes</button>
         </div>
     </div>
 
     <script>
-        function getDateTwoDaysBefore() {
-            const today = new Date();
-            today.setDate(today.getDate() - 2);
-            const year = today.getFullYear().toString().slice(2); // Get last two digits of the year
-            const month = ('0' + (today.getMonth() + 1)).slice(-2); // Months are zero based, so add 1
-            const day = ('0' + today.getDate()).slice(-2);
-            return year + month + day;
-        }
-
         function generateQRCode(text, size) {
             const qrContent = text + " " + size;
-            const qrCodeContainer = document.createElement('div');
-            qrCodeContainer.classList.add('qr-code');
-
-            new QRCode(qrCodeContainer, {
+            const qrCodeDiv = document.createElement("div");
+            qrCodeDiv.className = "qr-code";
+            new QRCode(qrCodeDiv, {
                 text: qrContent,
-                width: 256, // Adjust width to make the QR code larger
-                height: 256, // Adjust height to make the QR code larger
+                width: 200,
+                height: 200,
             });
-
-            const qrLabel = document.createElement('p');
-            qrLabel.textContent = size;
-            qrCodeContainer.appendChild(qrLabel);
-
-            return qrCodeContainer;
+            const label = document.createElement("p");
+            label.textContent = qrContent;
+            qrCodeDiv.appendChild(label);
+            return qrCodeDiv;
         }
 
-        function generateQRCodes() {
-            const qrText = document.getElementById("qr-text").value;
-            const dropdown = document.getElementById("sizes");
-            const generateOption = document.querySelector('input[name="generate-option"]:checked').value;
-            const activeSectionId = document.querySelector('input[name="section"]:checked').value;
-            const qrCodesContainer = document.getElementById(activeSectionId);
+        function generateSingleQRCode() {
+            const text = document.getElementById("qr-text").value;
+            const size = document.getElementById("sizes").value;
+            const container = document.getElementById("qr-codes-container");
 
-            qrCodesContainer.innerHTML = ""; // Clear previous QR codes
+            container.innerHTML = ''; // Clear existing QR codes
 
-            if (generateOption === "one") {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                const originalValue = selectedOption.value;
-                const qrSize = getDateTwoDaysBefore() + "-" + originalValue;
-                const qrCodeElement = generateQRCode(qrText, qrSize);
-                qrCodesContainer.appendChild(qrCodeElement);
-            } else if (generateOption === "all") {
-                Array.from(dropdown.options).forEach(option => {
-                    const originalValue = option.value;
-                    const qrSize = getDateTwoDaysBefore() + "-" + originalValue;
-                    const qrCodeElement = generateQRCode(qrText, qrSize);
-                    qrCodesContainer.appendChild(qrCodeElement);
-                });
-            }
+            container.appendChild(generateQRCode(text, size));
         }
 
-        function toggleSectionVisibility(sectionId) {
-            const sections = document.querySelectorAll('.qr-body');
-            sections.forEach(section => {
-                if (section.id === sectionId) {
-                    section.classList.add('active'); // Show selected section
-                } else {
-                    section.classList.remove('active'); // Hide other sections
-                }
-            });
-        }
+        function generateAllQRCodes() {
+            const text = document.getElementById("qr-text").value;
+            const size = document.getElementById("sizes").value;
+            const container = document.getElementById("qr-codes-container");
 
-        document.querySelectorAll('input[name="section"]').forEach(radio => {
-            radio.addEventListener('change', (event) => {
-                toggleSectionVisibility(event.target.value);
-            });
-        });
+            container.innerHTML = ''; // Clear existing QR codes
 
-        window.onload = () => {
-            toggleSectionVisibility(document.querySelector('input[name="section"]:checked').value);
+            const options = Array.from(document.querySelectorAll('#sizes option')).map(option => option.value);
+            options.forEach(option => {
+                container.appendChild(generateQRCode(text, option));
+            });
         }
     </script>
 </body>
