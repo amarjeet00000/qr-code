@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,36 +112,37 @@
             <select id="sizes">
                 <optgroup label="GS">
                     <option value="P10311001010800BC39000800F240206-6001000250">bleed screw</option>
-                    <option value="P10311001010800BC58610400F240206-6001000250">CKD seal piston</option>
+                    <option value="P10311001010804BC58610400F240206-600100020">CKD seal piston</option>
                     <option value="P10311001010800BC38002400F240206-6001000250">LOCAL SEAL PISTON</option>
-                    <option value="P10311001010800BC45000700F240206-6001000250">BOOT PISTON</option>
-                    <option value="P10311001010800BC30202100F240206-6001000250">PISTON</option>
-                    <option value="P10311001010800BC43101300F240206-6001000250">54 GUIDE ROD A</option>
-                    <option value="P10311001010800BC44101300F240206-6001000250">54 GUIDE ROD B</option>
-                    <option value="P10311001010800BC45000700F240206-6001000250">BOOT GUIDE</option>
-                    <option value="P10311001010800BC470B0500F240206-6001000250">SP2I SPRING PAD</option>
-                    <option value="P10311001010800BC47028900F240206-6001000250">QXI SPRING PAD</option>
-                    <option value="P10311001010800BC39100500F240206-6001000250">BLEED SCREW CAP</option>
-                    <option value="P10311001010800BC46000400F240206-6001000250">BOLT</option>
-                    <option value="P10311001010800BM38002100F240206-6001000250">PROTECTIVE PLUG</option>
+                    <option value="P10311001010800BC45000700F240206-6001000240">BOOT PISTON</option>
+                    <option value="P10311001010800BC30202100F240206-6001000290">PISTON</option>
+                    <option value="P10311001010800BC43101300F240206-6001000270">54 GUIDE ROD A</option>
+                    <option value="P10311001010800BC44101300F240206-6001000260">54 GUIDE ROD B</option>
+                    <option value="P10318427010400BC45000700A1069425-B,C000240">BOOT GUIDE</option>
+                    <option value="P10311001010800BC470B0500F240206-6001000210">SP2I SPRING PAD</option>
+                    <option value="P10311001010800BC47028900F240206-6001000210">QXI SPRING PAD</option>
+                    <option value="P10311001010800BC39100500F240206-6001000230">BLEED SCREW CAP</option>
+                    <option value="P10311001010800BC46000400F240206-6001000200">BOLT</option>
+                    <option value="P10311001010800BM38002100F240206-6001000260">PROTECTIVE PLUG</option>
                     <option value="P10311001010800BC44200700F240206-6001000250">54 bush</option>
                 </optgroup>
                 <optgroup label="51">
-                    <option value="P10311001010800BC38002800F240206-6001000250">Option 51-seal piston</option>
+                    <option value="P10311001010800BC38002800F240206-6001000240">Option 51-seal piston</option>
                     <option value="P10311001010800BC36000800F240206-6001000250">Option 51-BA Boot piston</option>
-                    <option value="P10311001010800BC47028400F240206-6001000250">Option 51-AH2 SPRING PAD</option>
-                    <option value="P10311001010800BC38002800F240206-6001000250">Option 52-BA SPRING PAD</option>
-                    <option value="P10311001010800BC38002800F240206-6001000250">Option 51-BUSH</option>
-                    <option value="P10311001010800BC56003900F240206-6001000250">BA RETURN SPRING</option>
-                    <option value="P10311001010800BC43101400F240206-6001000250">A</option>
-                    <option value="P10311001010800BC44101500F240206-6001000250">B</option>
-                    <option value="P10311001010800BC30207600F240206-6001000250">BA piston</option>
-                    <option value="P10311001010800BC45000800F240206-6001000250">BA boot guide rod</option>
-                    <option value="P10311001010800BC44200800F240206-6001000250">BA Bush</option>
+                    <option value="P10311001010800BC47028400F240206-6001000290">Option 51-AH2 SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F240206-6001000230">Option 52-BA SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F240206-6001000200">Option 51-BUSH</option>
+                    <option value="P10311001010800BC56003900F240206-6001000280">BA RETURN SPRING</option>
+                    <option value="P10311001010800BC43101400F240206-6001000240">A</option>
+                    <option value="P10311001010800BC44101500F240206-6001000260">B</option>
+                    <option value="P10311001010800BC30207600F240206-6001000270">BA piston</option>
+                    <option value="P10311001010800BC45000800F240206-6001000290">BA boot guide rod</option>
+                    <option value="P10311001010800BC44200800F240206-6001000220">BA Bush</option>
+                    <option value="P10318427011400BC45000700A1069425-B,C000200">BA Bush</option>
                 </optgroup>
                 <optgroup label="54">
-                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-1</option>
-                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-2</option>
+                    <option value="D202408060504 BC410A7200">qxi rh</option>
+                    <option value="D202408060504 BC121A7101">qxi carrier</option>
                 </optgroup>
             </select>
             <button onclick="generateSingleQRCode()">Generate Single QR Code</button>
@@ -152,6 +151,13 @@
     </div>
 
     <script>
+        function generateRandomizedSize(size) {
+            // Replace the 11th and 12th characters with random digits
+            let randomDigit1 = Math.floor(Math.random() * 10);
+            let randomDigit2 = Math.floor(Math.random() * 10);
+            return size.slice(0, 10) + randomDigit1 + randomDigit2 + size.slice(12);
+        }
+
         function generateQRCode(text, size) {
             const qrContent = text + " " + size;
             const qrCodeDiv = document.createElement("div");
@@ -169,26 +175,29 @@
 
         function generateSingleQRCode() {
             const text = document.getElementById("qr-text").value;
-            const size = document.getElementById("sizes").value;
+            let size = document.getElementById("sizes").value;
             const container = document.getElementById("qr-codes-container");
 
             container.innerHTML = ''; // Clear existing QR codes
 
-            container.appendChild(generateQRCode(text, size));
+            size = generateRandomizedSize(size);
+            const qrCode = generateQRCode(text, size);
+            container.appendChild(qrCode);
         }
 
         function generateAllQRCodes() {
             const text = document.getElementById("qr-text").value;
-            const size = document.getElementById("sizes").value;
+            const options = document.querySelectorAll("#sizes option");
             const container = document.getElementById("qr-codes-container");
 
             container.innerHTML = ''; // Clear existing QR codes
 
-            const options = Array.from(document.querySelectorAll('#sizes option')).map(option => option.value);
             options.forEach(option => {
-                container.appendChild(generateQRCode(text, option));
+                let size = option.value;
+                size = generateRandomizedSize(size);
+                const qrCode = generateQRCode(text, size);
+                container.appendChild(qrCode);
             });
         }
     </script>
-</body>
-</html>
+</body
