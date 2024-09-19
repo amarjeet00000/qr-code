@@ -111,38 +111,40 @@
             <input id="qr-text" type="text" placeholder="QR code text">
             <select id="sizes">
                 <optgroup label="GS">
-                    <option value="P10311001010800BC39000800F240206-6001000250">bleed screw</option>
-                    <option value="P10311001010804BC58610400F240206-600100020">CKD seal piston</option>
-                    <option value="P10311001010800BC38002400F240206-6001000250">LOCAL SEAL PISTON</option>
-                    <option value="P10311001010800BC45000700F240206-6001000240">BOOT PISTON</option>
-                    <option value="P10311001010800BC30202100F240206-6001000290">PISTON</option>
-                    <option value="P10311001010800BC43101300F240206-6001000270">54 GUIDE ROD A</option>
-                    <option value="P10311001010800BC44101300F240206-6001000260">54 GUIDE ROD B</option>
+                    <option value="P10323637010600BC39000800H002.09.2024000400">bleed screw</option>
+                    <option value="P103164400308004BC5861B001069420-B001000000">CKD seal piston</option>
+                    <option value="P10311001010800BC38002400F24020626001000250">LOCAL SEAL PISTON</option>
+                    <option value="P103230760108000003BC4418E0010722093C000200">BOOT PISTON</option>
+                    <option value="P10311001010800BC30202100F24020646001000290">PISTON</option>
+                    <option value="P10322203021600BC43101300H00001226443000300">54 GUIDE ROD A</option>
+                    <option value="P10322203021600BC44101300H00001226443000300">54 GUIDE ROD B</option>
                     <option value="P10318427010400BC45000700A1069425-B,C000240">BOOT GUIDE</option>
-                    <option value="P10311001010800BC470B0500F240206-6001000210">SP2I SPRING PAD</option>
-                    <option value="P10311001010800BC47028900F240206-6001000210">QXI SPRING PAD</option>
-                    <option value="P10311001010800BC39100500F240206-6001000230">BLEED SCREW CAP</option>
-                    <option value="P10311001010800BC46000400F240206-6001000200">BOLT</option>
-                    <option value="P10311001010800BM38002100F240206-6001000260">PROTECTIVE PLUG</option>
-                    <option value="P10311001010800BC44200700F240206-6001000250">54 bush</option>
+                    <option value="P10311001010800BC470B0500F24020656001000210">SP2I SPRING PAD</option>
+                    <option value="P10311001010800BC47028900F24020666001000210">QXI SPRING PAD</option>
+                    <option value="P10311001010800BC39100500F24020676001000230">BLEED SCREW CAP</option>
+                    <option value="P10321927012300BC46000400G00240605620000800">BOLT</option>
+                    <option value="P10311001010800BM38002100F24020696001000260">PROTECTIVE PLUG</option>
+                    <option value="P10311001010800BC44200700F24020606001000250">54 bush</option>
                 </optgroup>
                 <optgroup label="51">
-                    <option value="P10311001010800BC38002800F240206-6001000240">Option 51-seal piston</option>
-                    <option value="P10311001010800BC36000800F240206-6001000250">Option 51-BA Boot piston</option>
-                    <option value="P10311001010800BC47028400F240206-6001000290">Option 51-AH2 SPRING PAD</option>
-                    <option value="P10311001010800BC38002800F240206-6001000230">Option 52-BA SPRING PAD</option>
-                    <option value="P10311001010800BC38002800F240206-6001000200">Option 51-BUSH</option>
-                    <option value="P10311001010800BC56003900F240206-6001000280">BA RETURN SPRING</option>
-                    <option value="P10311001010800BC43101400F240206-6001000240">A</option>
-                    <option value="P10311001010800BC44101500F240206-6001000260">B</option>
-                    <option value="P10311001010800BC30207600F240206-6001000270">BA piston</option>
-                    <option value="P10311001010800BC45000800F240206-6001000290">BA boot guide rod</option>
-                    <option value="P10311001010800BC44200800F240206-6001000220">BA Bush</option>
-                    <option value="P10318427011400BC45000700A1069425-B,C000200">BA Bush</option>
+                    <option value="P10311001010800BC38002800F24020616001000240">Option 51-seal piston</option>
+                    <option value="P10311001010800BC36000800F24020626001000250">Option 51-BA Boot piston</option>
+                    <option value="P10311001010800BC47028400F24020636001000290">Option 51-AH2 SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F24020646001000230">Option 52-BA SPRING PAD</option>
+                    <option value="P10311001010800BC38002800F24020656001000200">Option 51-BUSH</option>
+                    <option value="P10311001010800BC56003900F24020666001000280">BA RETURN SPRING</option>
+                    <option value="P10311001010800BC43101400F24020676001000240">A</option>
+                    <option value="P10311001010800BC44101500F24020686001000260">B</option>
+                    <option value="P10311001010800BC30207600F24020696001000270">BA piston</option>
+                    <option value="P10311001010800BC45000800F24020606001000290">BA boot guide rod</option>
+                    <option value="P10311001010800BC44200800F24020606001000220">BA Bush</option>
+                   
                 </optgroup>
                 <optgroup label="54">
-                    <option value="D202408060504 BC410A7200">qxi rh</option>
-                    <option value="D202408060504 BC121A7101">qxi carrier</option>
+                    <option value="D202408060504 BC410A7200">qxi carrier</option>
+                    <option value="D202408060504 BC121A7101">qxi rh</option>
+                    <option value="D202408060504 BC12141700">AH2 LH</option>
+                  
                 </optgroup>
             </select>
             <button onclick="generateSingleQRCode()">Generate Single QR Code</button>
