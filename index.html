@@ -422,7 +422,7 @@
 
                 const originalValue = selectedOption.value;
 
-                const qrSize = getDateTwoDaysBefore() + "0" + originalValue;
+                const qrSize = getDateTwoDaysBefore() + "" + originalValue;
 
                 const qrCodeElement = generateQRCode(qrText, qrSize);
 
