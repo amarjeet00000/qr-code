@@ -1,495 +1,1215 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Generate QR Code</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+    <title>E-Commerce Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --danger-color: #F44336;
+            --success-color: #2196F3;
+            --warning-color: #FF9800;
+            --info-color: #00BCD4;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-
-            font-family: Arial, sans-serif;
-
-            background-color: #f2f2f2;
-
-            margin: 0;
-
-            padding: 0;
-
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-
-
-        .box {
-
-            text-align: center;
-
-            margin-top: 50px;
-
-            background-color: #fff;
-
-            border-radius: 8px;
-
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-            padding: 20px;
-
-            max-width: 800px;
-
-            margin: 20px auto;
-
-        }
-
-
-
-        .qr-header, .qr-body, .qr-footer {
-
-            margin-bottom: 20px;
-
-        }
-
-
-
-        .qr-code {
-
-            display: inline-block;
-
-            margin: 10px;
-
-            padding: 10px;
-
-            background-color: #fff;
-
-            border-radius: 8px;
-
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-
-            text-align: center;
-
-        }
-
-
-
-        .qr-code p {
-
-            margin: 0;
-
-            font-size: 14px;
-
-            color: #333;
-
-        }
-
-
-
-        .section-selector {
-
-            margin-bottom: 20px;
-
-        }
-
-
-
-        .section-selector input {
-
-            margin: 0 10px;
-
-            cursor: pointer;
-
-        }
-
-
-
-        .section-selector label {
-
-            font-size: 18px;
-
-            cursor: pointer;
-
-        }
-
-
-
-        .qr-body {
-
-            display: none;
-
-            flex-wrap: wrap;
-
-            justify-content: center;
-
-        }
-
-
-
-        .qr-body.active {
-
+        /* --- Layout --- */
+        #app-container {
             display: flex;
-
+            min-height: 100vh;
         }
-
-
-
-        .input-group {
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-        }
-
-
-
-        .input-group input, .input-group select, .input-group button {
-
-            padding: 10px;
-
-            margin: 10px;
-
-            border-radius: 5px;
-
-            border: 1px solid #ddd;
-
-            font-size: 16px;
-
-            width: 80%;
-
-            max-width: 300px;
-
-        }
-
-
-
-        .input-group button {
-
-            background-color: #333;
-
+        #sidebar {
+            width: 250px;
+            background: var(--primary-dark);
             color: white;
-
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease-in-out;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        #main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 100%;
+            margin: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        /* --- Sidebar Navigation --- */
+        .sidebar-nav a {
+            display: block;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
             cursor: pointer;
-
+        }
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        #logout-btn {
+            width: 80%;
+            margin: 20px auto 0;
+            display: block;
+            background: var(--danger-color);
         }
 
-
-
-        .input-group button:hover {
-
-            background-color: #555;
-
+        /* --- Cards and Forms --- */
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: var(--primary-dark);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .form-group, .form-row { margin-bottom: 15px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 20px; }
+        .form-row > div { flex: 1; min-width: 200px; }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            color: #555; 
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: var(--border-radius); 
+            font-size: 1rem; 
+            font-family: inherit; 
+            transition: border-color 0.2s; 
+        }
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--primary-color); 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2); 
+        }
+        
+        /* --- Buttons --- */
+        .btn { 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: var(--border-radius); 
+            cursor: pointer; 
+            font-weight: 500;
+            transition: background 0.3s ease; 
+            margin: 5px 0; /* Adjusted margin */
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-danger:hover { background: #d32f2f; }
+        .btn-warning { background: var(--warning-color); color: white; }
+        .btn-warning:hover { background: #F57C00; }
+        .btn-info { background: var(--info-color); color: white; }
+        .btn-info:hover { background: #0097A7; }
+        
+        /* --- Tables --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f0f0f0; font-weight: 700; color: #555; }
+        tbody tr:hover { background-color: #fafafa; }
+        
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        .error-message { color: var(--danger-color); margin-bottom: 10px; font-weight: 500; }
+        .success-message { color: var(--primary-dark); margin-bottom: 10px; font-weight: 500; }
+        .warning-message { color: var(--warning-color); margin-bottom: 10px; font-weight: 500; }
+        
+        /* Grid for Splash and Banners */
+        .splash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .splash-card { position: relative; background: #fff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s; }
+        .splash-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .splash-card img { height: 140px; width: 100%; object-fit: cover; }
+        .delete-btn { 
+            position: absolute; top: 5px; right: 5px; background: rgba(244, 67, 54, 0.9); color: white; border: none; 
+            border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
+        /* Status Badges */
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; }
+        .status-requested { background: #FFF3CD; color: #856404; }
+        .status-accepted { background: #D4EDDA; color: #155724; }
+        .status-info { background: #D1ECF1; color: #0C5460; }
+        .status-completed { background: #E2E3E5; color: #383D41; }
+
+        /* --- Modal --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 100; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: var(--border-radius); width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .close-modal { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999; }
+
+        /* --- Mobile Toggle --- */
+        .menu-toggle {
+            display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;
+            position: absolute; left: 15px; top: 15px; z-index: 20;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; height: 100%; transform: translateX(-250px); }
+            #sidebar.open { transform: translateX(0); }
+            .menu-toggle { display: block; color: var(--primary-dark); }
+            #main-content { padding-top: 60px; }
+            .header { box-shadow: none; background: none; padding: 0 10px; margin-bottom: 10px; }
+            .header .logo { display: none; }
+        }
     </style>
-
 </head>
-
 <body>
 
-    <div class="box">
-
-        <div class="section-selector">
-
-            <input type="radio" id="gs-section" name="section" value="gs" checked>
-
-            <label for="gs-section">GS</label>
-
-
-
-            <input type="radio" id="54-section" name="section" value="54">
-
-            <label for="54-section">54</label>
-
-
-
-            <input type="radio" id="51-section" name="section" value="51">
-
-            <label for="51-section">51</label>
-
+    <div id="login-container" class="container" style="max-width: 400px; padding-top: 100px;">
+        <div class="card">
+            <h1 class="logo" style="text-align: center; margin-bottom: 20px;">Admin Login</h1>
+            <form id="login-form">
+                <div id="login-error" class="error-message hidden"></div>
+                <div class="form-group"><label for="email">Email</label><input type="email" id="email" required></div>
+                <div class="form-group"><label for="password">Password</label><input type="password" id="password" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
         </div>
-
-
-
-        <div id="gs" class="qr-body active">
-
-            <!-- GS QR Code Container -->
-
-        </div>
-
-
-
-        <div id="54" class="qr-body">
-
-            <!-- 54 QR Code Container -->
-
-        </div>
-
-
-
-        <div id="51" class="qr-body">
-
-            <!-- 51 QR Code Container -->
-
-        </div>
-
-
-
-        <div class="input-group">
-
-            <input id="qr-text" type="text" placeholder="QR code text">
-
-            <select id="sizes">
-
-                <optgroup label="GS">
-
-                    <option value="00000000000002.04.202400000BC3900080002500110269320000400">bleed screw</option>
-                    <option value="00000000000000000004E10I000004BC586104000310258917000024">CKD seal piston</option>
-                    <option value="0000000020231108-6001200000BC3800240001000110269237000250">LOCAL SEAL PISTON</option>
-                    <option value="0000000001046811-A,B,C00000BC4500070003600110268209000200">BOOT PISTON</option>
-                    <option value="000000000000000004E10I00000BC3020210004000310258917000024">PISTON</option>
-                    <option value="000000000000000122642500000BC4310130001900210269875000300">54 GUIDE ROD A</option>
-                    <option value="000000000000000002202400000BC4410130001300110270067000300">54 GUIDE ROD B</option>
-  
-                    <option value="0000000001048413-A,B,C00000BC4500070002400110270870000200">BOOT GUIDE</option>
-
-                    
-
-                    <option value="[)>06:ASMWD2718961:PGSP2:PD:PNBC470B0500:RVB:QT00000100:PO:DM060524:SP :LTTEV_00:DS060524:EX*"> SP2I SPRING PAD</option>
-
-                    <option value="[)>06:ASMWD2718172:PGSK3:PD:PNBC47028900:RVG:QT00000100:PO:DM040624:SP :LTTFQ_00:DS040624:EX*">QXI SPRING PAD</option>
-
-                    <option value="000000000000000004E10I00000BC3910050004000310258917000024">BLEED SCREW CAP</option>
-   
-                    <option value="000000000000024050071000000BC4600040002000110270533000800">BOLT</option>
-   
-                    <option value="000000000000000004E10I00000BM3800210004000310258917000024">PROTECTIVE PLUG</option>
-   
-                    <option value="00000000000001042697-A00000BC4420070000400210258745001000">54 bush</option>
-
-               
-
-                
-
-                
-
-                
-
-                </optgroup>
-
-                <optgroup label="51">
-
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 51-seal piston</option>
-
-                    <option value="0000000000000004E10I00000BC3600080004000310258917000024">Option 51-BA Boot piston</option>
-
-                    <option value="0000000000000004E10I00000BC4702840004000310258917000024">Option 51-AH2 SPRING PAD</option>
-
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 52-BA SPRING PAD</option>
-
-                    <option value="0000000000000004E10I00000BC3800280004000310258917000024">Option 51-BUSH</option>
-
-                    <option value="0000000000000004E10I00000BC5600390004000310258917000024">BA RETURN SPRING</option>
-
-                    <option value="0000000000000004E10I00000BC4310140004000310258917000024">A </option>
-
-                    <option value="0000000000000004E10I00000BC4410150004000310258917000024">B </option>
-
-                    <option value="0000000000000004E10I00000BC3020760004000310258917000024">BA piston</option>
-
-                    <option value="0000000000000004E10I00000BC4500080004000310258917000024">BA boot guide rod</option>
-
-                    <option value="0000000000000004E10I00000BC4420080004000310258917000024">BA Bush</option>
-
-                    <option value="">null</option>
-
-                     
-
-                    
-
-                </optgroup>
-
-                <optgroup label="54">
-
-                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-1</option>
-
-                    <option value="2406080000000000000004E10I00000 BC540B1201 04000310258917000024">Option 54-2</option>
-
-                </optgroup>
-
-            </select> 
-
-            <input type="radio" id="choose-one" name="generate-option" value="one" checked>
-
-            <label for="choose-one">Generate QR Code for Selected Option</label>
-
-            <input type="radio" id="choose-all" name="generate-option" value="all">
-
-            <label for="choose-all">Generate QR Codes for All Options</label>
-
-            <button onclick="generateQRCodes()">Generate QR Codes</button>
-
-        </div>
-
     </div>
 
+    <div id="dashboard-container" class="hidden">
+        <div id="app-container">
+            
+            <button class="menu-toggle" id="menu-toggle">☰</button>
 
+            <div id="sidebar">
+                <div style="padding: 20px; font-size: 1.5rem; font-weight: 700; text-align: center; color: white;">ADMIN HUB</div>
+                <nav class="sidebar-nav">
+                    <a class="nav-link active" data-tab="splash">Splash Manager</a>
+                    <a class="nav-link" data-tab="banners">Banner Manager</a>
+                    <a class="nav-link" data-tab="coupons">Coupon Manager</a>
+                    <a class="nav-link" data-tab="notifications">Notifications</a>
+                    <a class="nav-link" data-tab="returns">Returns Manager</a>
+                    <a class="nav-link" data-tab="delivery">Delivery Boys</a>
+                </nav>
+                <button id="logout-btn" class="btn btn-danger">Logout</button>
+            </div>
+
+            <div id="main-content">
+                <div class="header">
+                    <h1 class="logo">Dashboard</h1>
+                </div>
+
+                <div id="splash-section" class="tab-content">
+                    <div class="card">
+                        <h2>Current Splash Screens</h2>
+                        <div id="splash-grid" class="splash-grid"></div>
+                    </div>
+                    <div class="card">
+                        <h2>Upload New Splash Image</h2>
+                        <form id="upload-form">
+                            <div id="upload-error" class="error-message hidden"></div>
+                            <div class="form-group"><label for="media-splash">Image File</label><input type="file" id="media-splash" name="media" accept="image/*" required></div>
+                            <div class="form-group"><label for="title">Title (Optional)</label><input type="text" id="title" name="title" placeholder="e.g., Diwali Special"></div>
+                            <button type="submit" class="btn btn-primary">Upload Image</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="banners-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Current Home Banners</h2>
+                        <div style="margin-bottom: 15px; font-size: 0.9em; color: #666;">
+                            <span style="display:inline-block; width:10px; height:10px; background:var(--success-color); border-radius:50%; margin-right:5px;"></span>Active
+                            <span style="display:inline-block; width:10px; height:10px; background:#ccc; border-radius:50%; margin-left:15px; margin-right:5px;"></span>Inactive
+                        </div>
+                        <div id="banner-grid" class="splash-grid"></div>
+                    </div>
+                    <div class="card" id="banner-form-card">
+                        <h2 id="banner-form-title">Upload New Banner</h2>
+                        <form id="banner-upload-form">
+                            <div id="banner-upload-error" class="error-message hidden"></div>
+                            
+                            <input type="hidden" id="edit-banner-id">
+
+                            <div class="form-group">
+                                <label for="media-banner" id="media-banner-label">Banner Image File (Required)</label>
+                                <input type="file" id="media-banner" name="media" accept="image/*">
+                                <small style="color: #666; display: none; margin-top: 5px;" id="edit-image-hint">Leave empty to keep current image.</small>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div>
+                                    <label for="banner-title">Title/Link (Optional)</label>
+                                    <input type="text" id="banner-title" name="title" placeholder="e.g., Summer Sale Link">
+                                </div>
+                                <div>
+                                    <label for="banner-position">Position</label>
+                                    <select id="banner-position" name="position">
+                                        <option value="hero">Hero Slider (Top)</option>
+                                        <option value="mid-section">Mid Section</option>
+                                        <option value="bottom">Bottom Section</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                             <div class="form-group">
+                                <label for="banner-active">Status</label>
+                                 <select id="banner-active" name="isActive">
+                                     <option value="true" selected>Active (Visible)</option>
+                                     <option value="false">Inactive (Hidden)</option>
+                                 </select>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button type="submit" class="btn btn-primary" id="banner-submit-btn">Upload Banner</button>
+                                <button type="button" class="btn btn-warning hidden" id="banner-cancel-edit-btn">Cancel Edit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="coupons-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Current Coupons</h2>
+                        <div id="coupon-list" style="overflow-x: auto;"></div>
+                    </div>
+                    <div class="card">
+                        <h2>Create New Coupon</h2>
+                        <form id="coupon-form">
+                            <div id="coupon-error" class="error-message hidden"></div>
+                            <div class="form-row">
+                                <div><label for="code">Coupon Code</label><input type="text" id="code" name="code" required></div>
+                                <div><label for="expiryDate">Expiry Date</label><input type="date" id="expiryDate" name="expiryDate" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div>
+                                    <label for="discountType">Discount Type</label>
+                                    <select id="discountType" name="discountType">
+                                        <option value="percentage">Percentage</option>
+                                        <option value="fixed">Fixed Amount</option>
+                                    </select>
+                                </div>
+                                <div><label for="discountValue">Value (e.g., 10 or 100)</label><input type="number" id="discountValue" name="discountValue" step="any" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div><label for="minPurchaseAmount">Min Purchase (Optional)</label><input type="number" id="minPurchaseAmount" name="minPurchaseAmount" step="any"></div>
+                                <div><label for="maxDiscountAmount">Max Discount (for %)</label><input type="number" id="maxDiscountAmount" name="maxDiscountAmount" step="any"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Create Coupon</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div id="notifications-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Send Broadcast Notification</h2>
+                        <form id="notification-form">
+                            <div id="notification-status" class="hidden" style="margin-bottom: 15px;"></div>
+                            
+                            <div class="form-group">
+                                <label for="notification-title">Title</label>
+                                <input type="text" id="notification-title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notification-message">Message</label>
+                                <textarea id="notification-message" name="message" rows="4" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="margin-bottom: 10px; display: block;">When to send?</label>
+                                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
+                                        <input type="radio" name="sendType" value="now" checked onclick="toggleScheduleInput(false)"> 
+                                        <strong>Send Now</strong>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
+                                        <input type="radio" name="sendType" value="later" onclick="toggleScheduleInput(true)"> 
+                                        <strong>Schedule for Later</strong>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group hidden" id="schedule-container" style="background: #f1f1f1; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                                <label for="scheduledAt" style="color: var(--primary-dark);">Select Date & Time</label>
+                                <input type="datetime-local" id="scheduledAt" name="scheduledAt" style="background: white;">
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <label for="notification-target">Target Audience</label>
+                                    <select id="notification-target" name="target">
+                                        <option value="all">All Users</option>
+                                        <option value="users">Customers Only</option>
+                                        <option value="sellers">Sellers Only</option>
+                                        <option value="delivery_boys">Delivery Boys Only</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="notification-image">Image (Optional)</label>
+                                    <input type="file" id="notification-image" name="media" accept="image/*">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 15px; padding: 12px;">Send Notification</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="returns-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Pending Return Requests</h2>
+                        <div id="return-requests-list" style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Reason</th>
+                                        <th>Payment Details</th> 
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="returns-table-body">
+                                    <tr><td colspan="7">Loading return requests...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="delivery-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Available Delivery Boys</h2>
+                        <div id="delivery-boys-list" style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Pincodes</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="delivery-table-body">
+                                    <tr><td colspan="5">Loading delivery boys...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="assign-delivery-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Approve Return & Queue Pickup</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modal-error" class="error-message hidden"></div>
+            
+            <div id="approval-text" style="line-height: 1.5;">
+                <p>By clicking <strong>'Approve Return'</strong>, you authorize the return process.</p>
+                <p>The system will create a <strong>'ReturnPending'</strong> job that an available delivery boy in the customer's area can accept for pickup.</p>
+                <p class="warning-message" style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
+                    ⚠️ Ensure you have reviewed the refund reason and payment details in the table before proceeding.
+                </p>
+            </div>
+
+            <div style="text-align: right; margin-top: 20px;">
+                <button id="confirm-approval" class="btn btn-primary">Approve Return</button>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // ================================================================
+        // IMPORTANT: Replace with your actual live server URL if different
+        // ================================================================
+        const API_BASE_URL = 'https://hdvideo-1.onrender.com'; 
 
-        function getDateTwoDaysBefore() {
+        // --- DOM Elements References ---
+        const loginContainer = document.getElementById('login-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginError = document.getElementById('login-error');
+        
+        const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
 
-            const today = new Date();
+        // Splash Elements
+        const uploadForm = document.getElementById('upload-form');
+        const splashGrid = document.getElementById('splash-grid');
+        const uploadError = document.getElementById('upload-error');
 
-            today.setDate(today.getDate() - 2);
+        // === NEW BANNER ELEMENTS ===
+        const bannerUploadForm = document.getElementById('banner-upload-form');
+        const bannerGrid = document.getElementById('banner-grid');
+        const bannerUploadError = document.getElementById('banner-upload-error');
+        // New elements for Edit feature
+        const bannerFormTitle = document.getElementById('banner-form-title');
+        const bannerSubmitBtn = document.getElementById('banner-submit-btn');
+        const bannerCancelEditBtn = document.getElementById('banner-cancel-edit-btn');
+        const editBannerIdInput = document.getElementById('edit-banner-id');
+        const mediaBannerInput = document.getElementById('media-banner');
+        const mediaBannerLabel = document.getElementById('media-banner-label');
+        const editImageHint = document.getElementById('edit-image-hint');
+        const bannerPositionSelect = document.getElementById('banner-position');
+        const bannerActiveSelect = document.getElementById('banner-active');
+        const bannerTitleInput = document.getElementById('banner-title');
+        
+        // Coupon & Other Elements
+        const couponForm = document.getElementById('coupon-form');
+        const couponList = document.getElementById('coupon-list');
+        const couponError = document.getElementById('coupon-error');
+        const notificationForm = document.getElementById('notification-form');
+        const notificationStatus = document.getElementById('notification-status');
+        const returnsTableBody = document.getElementById('returns-table-body');
+        const deliveryTableBody = document.getElementById('delivery-table-body');
 
-            const year = today.getFullYear().toString().slice(2); // Get last two digits of the year
+        // Modal elements
+        const assignDeliveryModal = document.getElementById('assign-delivery-modal');
+        const confirmApprovalBtn = document.getElementById('confirm-approval');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const modalError = document.getElementById('modal-error');
 
-            const month = ('0' + (today.getMonth() + 1)).slice(-2); // Months are zero based, so add 1
+        // State variables
+        let currentOrderId = null;
 
-            const day = ('0' + today.getDate()).slice(-2);
+        // ==========================================
+        // --- Core Authentication and Layout ---
+        // ==========================================
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            loginError.classList.add('hidden');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                // Using the login route from server.js
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (!await response.ok || data.user?.role !== 'admin') {
+                    throw new Error(data.message || 'Login failed. Ensure you are an admin.');
+                }
+                localStorage.setItem('admin_token', data.token);
+                showDashboard();
+            } catch (error) {
+                loginError.textContent = error.message;
+                loginError.classList.remove('hidden');
+            }
+        };
 
-            return year + month + day;
+        const handleLogout = () => {
+            localStorage.removeItem('admin_token');
+            showLogin();
+        };
 
-        }
+        const showLogin = () => {
+            loginContainer.classList.remove('hidden');
+            dashboardContainer.classList.add('hidden');
+        };
 
+        const showDashboard = () => {
+            loginContainer.classList.add('hidden');
+            dashboardContainer.classList.remove('hidden');
+            // Trigger click on the active tab or default to first
+            const activeTab = document.querySelector('.sidebar-nav .nav-link.active') || navLinks[0];
+            if(activeTab) activeTab.click(); 
+        };
+        
+        const toggleSidebar = () => {
+            sidebar.classList.toggle('open');
+        };
 
-
-        function generateQRCode(text, size) {
-
-            const qrContent = text + " " + size;
-
-            const qrCodeContainer = document.createElement('div');
-
-            qrCodeContainer.classList.add('qr-code');
-
-
-
-            new QRCode(qrCodeContainer, {
-
-                text: qrContent,
-
-                width: 256, // Adjust width to make the QR code larger
-
-                height: 256, // Adjust height to make the QR code larger
-
-            });
-
-
-
-            const qrLabel = document.createElement('p');
-
-            qrLabel.textContent = size;
-
-            qrCodeContainer.appendChild(qrLabel);
-
-
-
-            return qrCodeContainer;
-
-        }
-
-
-
-        function generateQRCodes() {
-
-            const qrText = document.getElementById("qr-text").value;
-
-            const dropdown = document.getElementById("sizes");
-
-            const generateOption = document.querySelector('input[name="generate-option"]:checked').value;
-
-            const activeSectionId = document.querySelector('input[name="section"]:checked').value;
-
-            const qrCodesContainer = document.getElementById(activeSectionId);
-
-
-
-            qrCodesContainer.innerHTML = ""; // Clear previous QR codes
-
-
-
-            if (generateOption === "one") {
-
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-
-                const originalValue = selectedOption.value;
-
-                const qrSize = getDateTwoDaysBefore() + "" + originalValue;
-
-                const qrCodeElement = generateQRCode(qrText, qrSize);
-
-                qrCodesContainer.appendChild(qrCodeElement);
-
-            } else if (generateOption === "all") {
-
-                Array.from(dropdown.options).forEach(option => {
-
-                    const originalValue = option.value;
-
-                    const qrSize = getDateTwoDaysBefore() + "-" + originalValue;
-
-                    const qrCodeElement = generateQRCode(qrText, qrSize);
-
-                    qrCodesContainer.appendChild(qrCodeElement);
-
+        // Tab Navigation Logic
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Close sidebar on mobile automatically
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                }
+                
+                // Update active link state
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                const tab = link.getAttribute('data-tab');
+                
+                // Show appropriate tab content
+                tabContents.forEach(content => {
+                    content.id === `${tab}-section` ? content.classList.remove('hidden') : content.classList.add('hidden');
                 });
 
-            }
+                // Trigger data fetches based on active tab
+                if (tab === 'splash') fetchSplashScreens();
+                
+                // Banner specific logic: reset form if leaving tab, fetch if entering
+                if (tab !== 'banners') resetBannerForm();
+                if (tab === 'banners') fetchBanners(); 
 
-        }
-
-
-
-        function toggleSectionVisibility(sectionId) {
-
-            const sections = document.querySelectorAll('.qr-body');
-
-            sections.forEach(section => {
-
-                if (section.id === sectionId) {
-
-                    section.classList.add('active'); // Show selected section
-
-                } else {
-
-                    section.classList.remove('active'); // Hide other sections
-
+                if (tab === 'coupons') fetchCoupons();
+                if (tab === 'returns') { 
+                    fetchDeliveryBoys(); // Fetch boys first to have context if needed later
+                    fetchReturnRequests();
                 }
-
+                if (tab === 'delivery') fetchDeliveryBoys();
             });
-
-        }
-
-
-
-        document.querySelectorAll('input[name="section"]').forEach(radio => {
-
-            radio.addEventListener('change', (event) => {
-
-                toggleSectionVisibility(event.target.value);
-
-            });
-
         });
 
+        // ==========================================
+        // --- Splash Manager Functions ---
+        // ==========================================
+        const fetchSplashScreens = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/splash`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.status === 401) return handleLogout();
+                const splashes = await response.json();
+                renderSplashScreens(splashes);
+            } catch (error) { console.error('Error fetching splashes:', error); }
+        };
 
+        const handleUpload = async (e) => {
+            e.preventDefault();
+            uploadError.classList.add('hidden');
+            const token = localStorage.getItem('admin_token');
+            const formData = new FormData(uploadForm);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/splash`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Upload failed.');
+                uploadForm.reset();
+                fetchSplashScreens();
+            } catch (error) {
+                uploadError.textContent = error.message;
+                uploadError.classList.remove('hidden');
+            }
+        };
 
-        window.onload = () => {
+        const handleDeleteSplash = async (id) => {
+            if (!confirm('Are you sure you want to delete this splash screen?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/splash/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete.');
+                fetchSplashScreens();
+            } catch (error) { alert(error.message); }
+        };
 
-            toggleSectionVisibility(document.querySelector('input[name="section"]:checked').value);
+        const renderSplashScreens = (splashes) => {
+            splashGrid.innerHTML = '';
+            if (!splashes || splashes.length === 0) {
+                splashGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">No splash screens found.</p>';
+                return;
+            }
+            splashes.forEach(splash => {
+                const card = document.createElement('div');
+                card.className = 'splash-card';
+                card.innerHTML = `
+                    <img src="${splash.image.url}" alt="${splash.title || ''}">
+                    <div class="info" style="padding: 15px;">
+                        <strong style="display: block; margin-bottom: 5px;">${splash.title || 'No Title'}</strong>
+                        <p style="font-size:0.9em; color:#777; margin: 0;">Type: ${splash.type}</p>
+                    </div>
+                    <button class="delete-btn" onclick="handleDeleteSplash('${splash._id}')" title="Delete">X</button>
+                `;
+                splashGrid.appendChild(card);
+            });
+        };
 
+        // ==================================================
+        // === NEW & UPDATED BANNER MANAGER FUNCTIONS ===
+        // ==================================================
+
+        // Helper to reset banner form back to "Upload Mode" state
+        const resetBannerForm = () => {
+            bannerUploadForm.reset();
+            editBannerIdInput.value = ''; // Clear hidden ID value
+            bannerFormTitle.textContent = 'Upload New Banner';
+            bannerSubmitBtn.textContent = 'Upload Banner';
+            bannerCancelEditBtn.classList.add('hidden'); // Hide cancel button
+            bannerUploadError.classList.add('hidden');
+            
+            // Reset image input UI to required state
+            mediaBannerInput.required = true;
+            mediaBannerLabel.textContent = 'Banner Image File (Required)';
+            editImageHint.style.display = 'none';
+            bannerActiveSelect.value = 'true'; // Default to active
+            bannerPositionSelect.value = 'hero'; // Default position
+        };
+
+        // Helper to populate form for editing when "Edit" button is clicked on a banner card
+        window.handleEditBannerBtnClick = (bannerDataString) => {
+            // Decode stringified object back to JSON
+            const banner = JSON.parse(decodeURIComponent(bannerDataString));
+            
+            // Populate form fields with existing data
+            editBannerIdInput.value = banner._id;
+            bannerTitleInput.value = banner.title || '';
+            // Map position value if server uses different names, otherwise use directly
+            bannerPositionSelect.value = banner.position || 'hero'; 
+            bannerActiveSelect.value = banner.isActive ? 'true' : 'false';
+
+            // Update UI elements for "Edit Mode"
+            bannerFormTitle.textContent = 'Edit Banner';
+            bannerSubmitBtn.textContent = 'Update Banner';
+            bannerCancelEditBtn.classList.remove('hidden'); // Show cancel button
+            bannerUploadError.classList.add('hidden');
+
+            // Image is optional during edit (only upload if changing)
+            mediaBannerInput.required = false;
+            mediaBannerLabel.textContent = 'Change Banner Image (Optional)';
+            editImageHint.style.display = 'block';
+
+            // Smooth scroll to the form so user sees it
+            document.getElementById('banner-form-card').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        const fetchBanners = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            try {
+                // Using correct API endpoint from server.js structure
+                const response = await fetch(`${API_BASE_URL}/api/admin/banners`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.status === 401) return handleLogout();
+                const banners = await response.json();
+                renderBanners(banners);
+            } catch (error) { console.error('Error fetching banners:', error); }
+        };
+
+        // Updated Handle Upload handles BOTH Create (POST) and Edit (PUT) logic
+        const handleBannerUpload = async (e) => {
+            e.preventDefault();
+            bannerUploadError.classList.add('hidden');
+            const token = localStorage.getItem('admin_token');
+            
+            const bannerId = editBannerIdInput.value;
+            const isEditMode = !!bannerId; // Boolean check if ID exists
+
+            const formData = new FormData();
+            const mediaFile = mediaBannerInput.files[0];
+            const title = bannerTitleInput.value;
+            const position = bannerPositionSelect.value;
+            const isActive = bannerActiveSelect.value;
+
+            // Validation: Image is required only for *new* uploads
+            if (!isEditMode && !mediaFile) {
+                bannerUploadError.textContent = "Please select an image file for a new banner.";
+                bannerUploadError.classList.remove('hidden');
+                return;
+            }
+
+            // Append fields expected by server.js schema
+            if (mediaFile) {
+                // Only append media if a new file was selected
+                formData.append('media', mediaFile);
+            }
+            formData.append('title', title || ''); 
+            // Using title as link input for now based on UI. Adjust if separate link field added.
+            formData.append('link', title || ''); 
+            formData.append('position', position); 
+            formData.append('isActive', isActive); // Sends 'true' or 'false' string
+            formData.append('type', 'image');    // Hardcoded as image type
+
+            try {
+                // Determine URL and Method based on mode
+                let url = `${API_BASE_URL}/api/admin/banners`;
+                let method = 'POST';
+
+                if (isEditMode) {
+                     url = `${API_BASE_URL}/api/admin/banners/${bannerId}`;
+                     method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    // Browser automatically sets Content-Type to multipart/form-data for FormData
+                    body: formData
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || (isEditMode ? 'Update failed.' : 'Upload failed.'));
+                
+                resetBannerForm(); // Reset form back to upload mode upon success
+                fetchBanners(); // Refresh grid list
+                if(isEditMode) alert("Banner updated successfully!");
+
+            } catch (error) {
+                bannerUploadError.textContent = error.message;
+                bannerUploadError.classList.remove('hidden');
+            }
+        };
+
+        const handleDeleteBanner = async (id) => {
+            if (!confirm('Are you sure you want to delete this banner?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                // Using correct delete endpoint from server.js
+                const response = await fetch(`${API_BASE_URL}/api/admin/banners/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete banner.');
+                
+                // If we deleted the banner currently being edited, reset the form
+                if(editBannerIdInput.value === id) {
+                    resetBannerForm();
+                }
+                fetchBanners();
+            } catch (error) { alert(error.message); }
+        };
+
+        // Updated Render Banners to include Edit button and status indicators
+        const renderBanners = (banners) => {
+            bannerGrid.innerHTML = '';
+            if (!banners || banners.length === 0) {
+                bannerGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">No banners found.</p>';
+                return;
+            }
+            banners.forEach(banner => {
+                const card = document.createElement('div');
+                card.className = 'splash-card'; 
+                
+                // Determine status color border visualization
+                const statusColor = banner.isActive ? 'var(--success-color)' : '#ccc';
+                card.style.borderBottom = `4px solid ${statusColor}`;
+
+                // Prepare data for edit button (encode object to safely pass in HTML attribute)
+                const bannerDataSafe = encodeURIComponent(JSON.stringify(banner));
+
+                card.innerHTML = `
+                    <img src="${banner.image?.url || ''}" alt="${banner.title || 'Banner'}" style="height: 120px;">
+                    <div class="info" style="padding: 10px;">
+                        <strong style="display:block; margin-bottom:5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${banner.title || 'No Title'}</strong>
+                        <div style="font-size:0.85em; color:#666;">
+                            <span style="text-transform: capitalize; font-weight:500;">${banner.position || 'Hero'}</span>
+                             | <span style="color: ${banner.isActive ? 'var(--success-color)':'#999'}">${banner.isActive ? 'Active' : 'Inactive'}</span>
+                        </div>
+                    </div>
+                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px;">
+                        <button class="btn btn-info" style="padding: 4px 10px; font-size: 0.8rem; margin:0;" onclick="handleEditBannerBtnClick('${bannerDataSafe}')" title="Edit">Edit</button>
+                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem; margin:0;" onclick="handleDeleteBanner('${banner._id}')" title="Delete">X</button>
+                    </div>
+                `;
+                bannerGrid.appendChild(card);
+            });
+        };
+
+        // ==========================================
+        // --- Coupon Manager Functions ---
+        // ==========================================
+        const fetchCoupons = async () => {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/coupons`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.status === 401) return handleLogout();
+                const coupons = await response.json();
+                renderCoupons(coupons);
+            } catch (error) { console.error('Error fetching coupons:', error); }
+        };
+
+        const renderCoupons = (coupons) => {
+            couponList.innerHTML = '';
+            if (!coupons || coupons.length === 0) {
+                couponList.innerHTML = '<p>No coupons found.</p>';
+                return;
+            }
+            const table = document.createElement('table');
+            table.innerHTML = `<thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Min Purchase</th><th>Expires</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`;
+            const tbody = table.querySelector('tbody');
+            coupons.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${c.code}</strong></td>
+                    <td>${c.discountType}</td>
+                    <td>${c.discountType === 'percentage' ? `${c.discountValue}%` : `₹${c.discountValue}`}</td>
+                    <td>₹${c.minPurchaseAmount || 0}</td>
+                    <td>${new Date(c.expiryDate).toLocaleDateString()}</td>
+                    <td>${c.isActive ? '<span style="color:var(--primary-color)">Active</span>' : '<span style="color:#999">Inactive</span>'}</td>
+                    <td><button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem;" onclick="handleDeleteCoupon('${c._id}')">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            couponList.appendChild(table);
+        };
+        
+        const handleCouponCreate = async (e) => {
+            e.preventDefault();
+            couponError.classList.add('hidden');
+            const token = localStorage.getItem('admin_token');
+            const data = Object.fromEntries(new FormData(couponForm).entries());
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/coupons`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Failed to create.');
+                couponForm.reset();
+                fetchCoupons();
+            } catch (error) {
+                couponError.textContent = error.message;
+                couponError.classList.remove('hidden');
+            }
+        };
+
+        const handleDeleteCoupon = async (id) => {
+            if (!confirm('Are you sure you want to delete this coupon?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/coupons/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('Failed to delete.');
+                fetchCoupons();
+            } catch (error) { alert(error.message); }
+        };
+
+        // ==========================================
+        // --- Notification Functions ---
+        // ==========================================
+        
+        // Helper function to toggle UI for scheduling
+        window.toggleScheduleInput = (show) => {
+            const container = document.getElementById('schedule-container');
+            const input = document.getElementById('scheduledAt');
+            if (show) {
+                container.classList.remove('hidden');
+                input.required = true;
+            } else {
+                container.classList.add('hidden');
+                input.value = ''; // Clear input to ensure immediate send
+                input.required = false;
+            }
         }
 
+        const handleNotificationSend = async (e) => {
+            e.preventDefault();
+            notificationStatus.className = 'hidden';
+            const token = localStorage.getItem('admin_token');
+            
+            const formData = new FormData(notificationForm);
+            const scheduledAt = formData.get('scheduledAt');
+
+            if (!formData.get('title') || !formData.get('message')) {
+                notificationStatus.textContent = 'Title and Message are required.';
+                notificationStatus.className = 'error-message';
+                return;
+            }
+
+            try {
+                let response;
+                
+                // Logic: If schedule input has value, use Schedule API. Else use Broadcast.
+                if (scheduledAt) {
+                    // Ensure consistent naming: Schedule API expects 'body' instead of 'message'
+                    formData.append('body', formData.get('message'));
+                    
+                    response = await fetch(`${API_BASE_URL}/api/admin/notifications/schedule`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                } else {
+                    response = await fetch(`${API_BASE_URL}/api/admin/broadcast`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                }
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Failed to send notification.');
+                
+                notificationStatus.textContent = scheduledAt ? 'Success! Notification Scheduled.' : 'Success! Notification Sent.';
+                notificationStatus.className = 'success-message';
+                notificationForm.reset();
+                // Reset back to "Send Now" default state
+                toggleScheduleInput(false);
+                document.querySelector('input[value="now"]').checked = true;
+
+            } catch (error) {
+                notificationStatus.textContent = error.message;
+                notificationStatus.className = 'error-message';
+            }
+        };
+        
+        // ==========================================
+        // --- Returns Manager Functions ---
+        // ==========================================
+        const fetchReturnRequests = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            returnsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading...</td></tr>';
+
+            try {
+                // Using the general orders endpoint and filtering client-side based on server.js routes
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) return handleLogout();
+                const orders = await response.json();
+                
+                // Filter for relevant return statuses
+                const pendingReturns = orders.filter(o => 
+                    o.deliveryStatus === 'Return Requested' || 
+                    o.deliveryStatus === 'Return Accepted by Admin'
+                );
+                
+                renderReturnRequests(pendingReturns);
+            } catch (error) { 
+                console.error('Error fetching returns:', error);
+                returnsTableBody.innerHTML = '<tr><td colspan="7" class="error-message" style="text-align:center; padding: 20px;">Error fetching requests. Check console.</td></tr>';
+            }
+        };
+
+        const renderReturnRequests = (orders) => {
+            returnsTableBody.innerHTML = '';
+            if (!orders || orders.length === 0) {
+                returnsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color: #777;">No pending return requests.</td></tr>';
+                return;
+            }
+
+            orders.forEach(order => {
+                // Calculate grand total (approximate based on schema)
+                const grandTotal = (order.totalAmount + (order.shippingFee || 0) + (order.taxAmount || 0)) - (order.discountAmount || 0);
+                
+                // Find the relevant refund request details
+                const refundRequest = order.refunds ? order.refunds.findLast(r => ['requested', 'pending', 'approved'].includes(r.status)) : null;
+                const customerName = order.user?.name || 'N/A';
+
+                let paymentDisplay = '<span style="color:#999">Not Provided</span>';
+                if (refundRequest) {
+                    if (refundRequest.upiId) {
+                        paymentDisplay = `<strong style="color:var(--primary-dark)">UPI:</strong> ${refundRequest.upiId}`;
+                    } else if (refundRequest.bankAccountNumber) {
+                            paymentDisplay = `
+                            <div style="font-size:0.9em; line-height:1.4;">
+                                <strong>Bank:</strong> ${refundRequest.bankAccountNumber}<br>
+                                <strong>IFSC:</strong> ${refundRequest.ifsc}
+                            </div>
+                            `;
+                    }
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-family:monospace; font-weight:700;">#${order._id.slice(-6)}</td>
+                    <td>${customerName}</td>
+                    <td style="font-weight:700;">₹${grandTotal.toFixed(2)}</td>
+                    <td>${refundRequest ? refundRequest.reason : 'N/A'}</td>
+                    <td>${paymentDisplay}</td> 
+                    <td><span class="status-badge status-requested">${order.deliveryStatus}</span></td>
+                    <td>
+                        <button 
+                            class="btn btn-info" 
+                            style="padding: 6px 12px; font-size: 0.85rem;"
+                            onclick="openApproveReturnModal('${order._id}')"
+                            ${order.deliveryStatus !== 'Return Requested' ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+                            Review & Approve
+                        </button>
+                    </td>
+                `;
+                returnsTableBody.appendChild(tr);
+            });
+        };
+
+        // ==========================================
+        // --- Delivery Boys Functions ---
+        // ==========================================
+        const fetchDeliveryBoys = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            deliveryTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading...</td></tr>';
+
+            try {
+                // Using correct endpoint from server.js
+                const response = await fetch(`${API_BASE_URL}/api/admin/delivery-boys`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) return handleLogout();
+                const deliveryBoysData = await response.json();
+                renderDeliveryBoys(deliveryBoysData);
+            } catch (error) { 
+                console.error('Error fetching delivery boys:', error);
+                deliveryTableBody.innerHTML = '<tr><td colspan="5" class="error-message" style="text-align:center; padding: 20px;">Error fetching delivery boys. Check console.</td></tr>';
+            }
+        };
+
+        const renderDeliveryBoys = (boys) => {
+            deliveryTableBody.innerHTML = '';
+            if (!boys || boys.length === 0) {
+                deliveryTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #777;">No delivery boys registered.</td></tr>';
+                return;
+            }
+            boys.forEach(boy => {
+                const tr = document.createElement('tr');
+                // Determine status based on role and approval
+                const isAvailable = boy.role === 'delivery' && boy.approved === true; 
+                const statusStyle = isAvailable ? 'background:#D4EDDA; color:#155724;' : 'background:#E2E3E5; color:#383D41;';
+                const statusText = isAvailable ? 'Active' : 'Inactive/Pending';
+                const pincodesList = boy.pincodes && boy.pincodes.length > 0 ? boy.pincodes.join(', ') : '<span style="color:#999">None assigned</span>';
+
+                tr.innerHTML = `
+                    <td><strong>${boy.name || 'N/A'}</strong></td>
+                    <td>${boy.phone || 'N/A'}</td>
+                    <td>${pincodesList}</td>
+                    <td><span class="status-badge" style="${statusStyle}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-warning" style="padding: 5px 10px; font-size: 0.85rem;" onclick="alert('Go to the main Admin Users/Sellers tab to manage approvals and roles.')">Manage Status</button>
+                    </td>
+                `;
+                deliveryTableBody.appendChild(tr);
+            });
+        };
+
+        // ==========================================
+        // --- Modal Functions ---
+        // ==========================================
+        const openApproveReturnModal = (orderId) => {
+            currentOrderId = orderId;
+            modalError.classList.add('hidden');
+            assignDeliveryModal.style.display = 'flex';
+        };
+        const closeApproveReturnModal = () => {
+            assignDeliveryModal.style.display = 'none';
+            currentOrderId = null;
+        };
+        const handleApproveReturn = async () => {
+            modalError.classList.add('hidden');
+            if (!currentOrderId) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                // Using correct approve-return endpoint from server.js
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders/${currentOrderId}/approve-return`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Failed to approve return request.');
+                alert('✅ Return Approved! A pickup job has been created for the delivery boy pool.');
+                closeApproveReturnModal();
+                fetchReturnRequests(); // Refresh list
+            } catch (error) {
+                modalError.textContent = error.message;
+                modalError.classList.remove('hidden');
+            }
+        };
+
+        // ==========================================
+        // --- Initialization & Event Listeners ---
+        // ==========================================
+        loginForm.addEventListener('submit', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+        menuToggle.addEventListener('click', toggleSidebar);
+        
+        // Splash Listeners
+        uploadForm.addEventListener('submit', handleUpload);
+        // Attach to window for onclick access from HTML string
+        window.handleDeleteSplash = handleDeleteSplash;
+
+        // NEW Banner Listeners
+        bannerUploadForm.addEventListener('submit', handleBannerUpload);
+        bannerCancelEditBtn.addEventListener('click', resetBannerForm);
+        // Attach to window for onclick access from HTML string
+        window.handleDeleteBanner = handleDeleteBanner;
+        window.handleEditBannerBtnClick = handleEditBannerBtnClick;
+        
+        // Other Listeners
+        couponForm.addEventListener('submit', handleCouponCreate);
+        notificationForm.addEventListener('submit', handleNotificationSend);
+        confirmApprovalBtn.addEventListener('click', handleApproveReturn);
+        closeModalBtn.addEventListener('click', closeApproveReturnModal);
+        // Close modal when clicking outside content area
+        window.onclick = (event) => { if (event.target === assignDeliveryModal) closeApproveReturnModal(); };
+        
+        // Attach remaining global handlers
+        window.handleDeleteCoupon = handleDeleteCoupon;
+        window.openApproveReturnModal = openApproveReturnModal;
+
+        // Check auth on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('admin_token')) {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        });
     </script>
-
 </body>
-
 </html>
