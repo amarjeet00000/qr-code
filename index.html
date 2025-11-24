@@ -3,219 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce Admin Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Quick Sauda Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS Variables & Reset --- */
+        /* --- CSS Variables & Modern Reset --- */
         :root {
-            --primary-color: #4CAF50;
-            --primary-dark: #388E3C;
-            --danger-color: #F44336;
-            --success-color: #2196F3;
-            --warning-color: #FF9800;
-            --info-color: #00BCD4;
-            --background-color: #f8f9fa;
+            /* Brand Colors */
+            --primary-color: #10B981; /* Modern Emerald */
+            --primary-dark: #059669;
+            --primary-light: #D1FAE5;
+            
+            /* Sidebar Colors */
+            --sidebar-bg: #1e293b; /* Slate 800 */
+            --sidebar-text: #94a3b8;
+            --sidebar-active-bg: #10B981;
+            --sidebar-active-text: #ffffff;
+
+            /* Functional Colors */
+            --danger-color: #EF4444;
+            --danger-bg: #FEE2E2;
+            --success-color: #10B981;
+            --success-bg: #D1FAE5;
+            --warning-color: #F59E0B;
+            --warning-bg: #FEF3C7;
+            --info-color: #3B82F6;
+            --info-bg: #DBEAFE;
+            --upi-color: #8B5CF6; /* Violet */
+
+            /* Layout Colors */
+            --background-color: #F3F4F6; /* Light Gray */
             --card-bg: #ffffff;
-            --text-color: #333;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --border-radius: 8px;
+            --text-color: #1F2937;
+            --text-muted: #6B7280;
+            
+            /* Effects */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --transition: all 0.3s ease;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
+            font-size: 14px;
         }
 
-        /* --- Layout --- */
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; color: var(--text-color); }
+
+        /* --- Layout Structure --- */
         #app-container {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
+
+        /* --- Modern Sidebar --- */
         #sidebar {
-            width: 250px;
-            background: var(--primary-dark);
+            width: 260px;
+            background: var(--sidebar-bg);
             color: white;
-            padding: 20px 0;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease-in-out;
-            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            z-index: 20;
             flex-shrink: 0;
         }
-        #main-content {
+
+        .sidebar-header {
+            padding: 25px 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-nav {
+            padding: 20px 15px;
             flex-grow: 1;
-            padding: 20px;
             overflow-y: auto;
         }
-        .container {
-            max-width: 100%;
-            margin: auto;
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 5px;
+            transition: var(--transition);
+            cursor: pointer;
         }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        #logout-btn {
+            margin: 20px;
+            width: calc(100% - 40px);
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        #logout-btn:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* --- Main Content Area --- */
+        #main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: var(--background-color);
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
+            margin-bottom: 30px;
         }
         
-        /* --- Sidebar Navigation --- */
-        .sidebar-nav a {
-            display: block;
-            padding: 15px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.2s;
-            cursor: pointer;
-        }
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background: var(--primary-color);
-            color: white;
-        }
-        #logout-btn {
-            width: 80%;
-            margin: 20px auto 0;
-            display: block;
-            background: var(--danger-color);
+        .header .logo {
+            font-size: 1.8rem;
+            color: #111827;
         }
 
-        /* --- Cards and Forms --- */
+        .header #user-info {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Cards --- */
         .card {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 25px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-        h2 {
-            color: var(--primary-dark);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .form-group, .form-row { margin-bottom: 15px; }
-        .form-row { display: flex; flex-wrap: wrap; gap: 20px; }
-        .form-row > div { flex: 1; min-width: 200px; }
-        label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: 500; 
-            font-size: 0.9rem; 
-            color: #555; 
-        }
-        input, select, textarea { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ddd; 
-            border-radius: var(--border-radius); 
-            font-size: 1rem; 
-            font-family: inherit; 
-            transition: border-color 0.2s; 
-        }
-        input:focus, select:focus, textarea:focus { 
-            border-color: var(--primary-color); 
-            outline: none; 
-            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2); 
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: var(--transition);
         }
         
-        /* --- Buttons --- */
-        .btn { 
-            padding: 10px 15px; 
-            border: none; 
-            border-radius: var(--border-radius); 
-            cursor: pointer; 
-            font-weight: 500;
-            transition: background 0.3s ease; 
-            margin: 5px 0; /* Adjusted margin */
-        }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success-color); color: white; }
-        .btn-danger { background: var(--danger-color); color: white; }
-        .btn-danger:hover { background: #d32f2f; }
-        .btn-warning { background: var(--warning-color); color: white; }
-        .btn-warning:hover { background: #F57C00; }
-        .btn-info { background: var(--info-color); color: white; }
-        .btn-info:hover { background: #0097A7; }
-        
-        /* --- Tables --- */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f0f0f0; font-weight: 700; color: #555; }
-        tbody tr:hover { background-color: #fafafa; }
-        
-        /* --- Utilities --- */
-        .hidden { display: none !important; }
-        .error-message { color: var(--danger-color); margin-bottom: 10px; font-weight: 500; }
-        .success-message { color: var(--primary-dark); margin-bottom: 10px; font-weight: 500; }
-        .warning-message { color: var(--warning-color); margin-bottom: 10px; font-weight: 500; }
-        
-        /* Grid for Splash and Banners */
-        .splash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .splash-card { position: relative; background: #fff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s; }
-        .splash-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .splash-card img { height: 140px; width: 100%; object-fit: cover; }
-        .delete-btn { 
-            position: absolute; top: 5px; right: 5px; background: rgba(244, 67, 54, 0.9); color: white; border: none; 
-            border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        .card:hover {
+            box-shadow: var(--shadow-md);
         }
 
-        /* Status Badges */
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; }
-        .status-requested { background: #FFF3CD; color: #856404; }
-        .status-accepted { background: #D4EDDA; color: #155724; }
-        .status-info { background: #D1ECF1; color: #0C5460; }
-        .status-completed { background: #E2E3E5; color: #383D41; }
+        h2 {
+            font-size: 1.25rem;
+            color: #374151;
+            border-bottom: 2px solid #F3F4F6;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* --- Forms --- */
+        .form-group, .form-row { margin-bottom: 20px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 20px; }
+        .form-row > div { flex: 1; min-width: 200px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            color: #4B5563; 
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1px solid #E5E7EB; 
+            border-radius: var(--border-radius-sm); 
+            font-size: 0.95rem; 
+            background-color: #F9FAFB;
+            font-family: inherit; 
+            transition: var(--transition); 
+            color: #1F2937;
+        }
+
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--primary-color); 
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); 
+        }
+        
+        input[type="file"] {
+            padding: 10px;
+            background: white;
+        }
+
+        /* --- Buttons --- */
+        .btn { 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: var(--border-radius-sm); 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition); 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary { background: var(--primary-color); color: white; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 6px 10px rgba(16, 185, 129, 0.3); }
+
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-warning { background: var(--warning-color); color: white; }
+        .btn-info { background: var(--info-color); color: white; }
+        .btn-info:hover { background: #2563EB; }
+
+        /* --- Modern Tables --- */
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0 8px; /* Space between rows */
+            margin-top: 10px; 
+        }
+        
+        th { 
+            text-align: left; 
+            padding: 12px 15px; 
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        td { 
+            background: white;
+            padding: 16px 15px; 
+            color: #374151;
+            border-top: 1px solid #F3F4F6;
+            border-bottom: 1px solid #F3F4F6;
+            font-size: 0.9rem;
+        }
+        
+        td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; border-left: 1px solid #F3F4F6; }
+        td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; border-right: 1px solid #F3F4F6; }
+
+        tr { transition: var(--transition); }
+        tbody tr:hover td { background-color: #F9FAFB; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        
+        /* --- Grid for Splash/Banners --- */
+        .splash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        
+        .splash-card { 
+            position: relative; 
+            background: white; 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow-sm); 
+            overflow: hidden; 
+            transition: var(--transition); 
+            border: 1px solid #E5E7EB;
+        }
+        
+        .splash-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .splash-card img { height: 150px; width: 100%; object-fit: cover; }
+        
+        .delete-btn { 
+            position: absolute; top: 8px; right: 8px; 
+            background: white; color: var(--danger-color); 
+            border: 1px solid #FEE2E2;
+            border-radius: 50%; width: 32px; height: 32px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .delete-btn:hover { background: var(--danger-color); color: white; }
+
+        /* --- Status Badges --- */
+        .status-badge { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .status-requested, .status-pending { background: var(--warning-bg); color: #B45309; }
+        .status-accepted, .status-processed, .status-settled, .status-active { background: var(--success-bg); color: #065F46; }
+        .status-info { background: var(--info-bg); color: #1E40AF; }
+        .status-completed { background: #F3F4F6; color: #374151; }
+        .status-rejected, .status-failed, .status-inactive { background: var(--danger-bg); color: #991B1B; }
+
+        /* --- Login Screen --- */
+        #login-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 0 !important; /* Override inline style */
+            background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+        }
+        #login-container .card {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        #login-container h1 { color: var(--primary-dark); margin-bottom: 30px; }
 
         /* --- Modal --- */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); z-index: 100; justify-content: center; align-items: center;
+            background-color: rgba(17, 24, 39, 0.7); z-index: 100; 
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(4px);
         }
         .modal-content {
-            background: white; padding: 25px; border-radius: var(--border-radius); width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto;
+            background: white; padding: 30px; border-radius: 16px; 
+            width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 20px 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: modalPop 0.3s ease-out;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .close-modal { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #999; }
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .close-modal { background: none; border: none; font-size: 2rem; cursor: pointer; color: #9CA3AF; transition: 0.2s; line-height: 1;}
+        .close-modal:hover { color: var(--danger-color); }
+
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        .error-message { 
+            background: var(--danger-bg); color: #991B1B; 
+            padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 15px; border: 1px solid #FECACA;
+        }
+        .success-message { 
+            background: var(--success-bg); color: #065F46; 
+            padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 15px; border: 1px solid #A7F3D0;
+        }
 
         /* --- Mobile Toggle --- */
         .menu-toggle {
-            display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer;
-            position: absolute; left: 15px; top: 15px; z-index: 20;
+            display: none; background: white; border: none; color: var(--primary-color); 
+            font-size: 24px; cursor: pointer; padding: 5px 10px; border-radius: 6px;
+            position: absolute; left: 20px; top: 20px; z-index: 30; box-shadow: var(--shadow-md);
         }
 
-        /* --- Responsive Design --- */
+        /* --- Responsive --- */
         @media (max-width: 768px) {
-            #sidebar { position: fixed; height: 100%; transform: translateX(-250px); }
+            #sidebar { position: fixed; height: 100%; transform: translateX(-270px); }
             #sidebar.open { transform: translateX(0); }
-            .menu-toggle { display: block; color: var(--primary-dark); }
-            #main-content { padding-top: 60px; }
-            .header { box-shadow: none; background: none; padding: 0 10px; margin-bottom: 10px; }
-            .header .logo { display: none; }
+            .menu-toggle { display: block; }
+            #main-content { padding: 80px 15px 20px; }
+            .header { flex-direction: column; align-items: flex-end; gap: 10px; margin-bottom: 20px;}
+            .header .logo { display: none; } /* Hide logo on mobile header to save space */
         }
     </style>
 </head>
 <body>
 
-    <div id="login-container" class="container" style="max-width: 400px; padding-top: 100px;">
+    <div id="login-container" class="container">
         <div class="card">
-            <h1 class="logo" style="text-align: center; margin-bottom: 20px;">Admin Login</h1>
+            <h1 class="logo" style="text-align: center;">Admin Login</h1>
             <form id="login-form">
                 <div id="login-error" class="error-message hidden"></div>
-                <div class="form-group"><label for="email">Email</label><input type="email" id="email" required></div>
-                <div class="form-group"><label for="password">Password</label><input type="password" id="password" required></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="admin@quicksauda.com" required></div>
+                <div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="••••••••" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">Sign In to Dashboard</button>
             </form>
         </div>
     </div>
@@ -226,21 +415,27 @@
             <button class="menu-toggle" id="menu-toggle">☰</button>
 
             <div id="sidebar">
-                <div style="padding: 20px; font-size: 1.5rem; font-weight: 700; text-align: center; color: white;">ADMIN HUB</div>
+                <div class="sidebar-header">QUICK SAUDA</div>
                 <nav class="sidebar-nav">
-                    <a class="nav-link active" data-tab="splash">Splash Manager</a>
-                    <a class="nav-link" data-tab="banners">Banner Manager</a>
-                    <a class="nav-link" data-tab="coupons">Coupon Manager</a>
-                    <a class="nav-link" data-tab="notifications">Notifications</a>
-                    <a class="nav-link" data-tab="returns">Returns Manager</a>
-                    <a class="nav-link" data-tab="delivery">Delivery Boys</a>
+                    <a class="nav-link active" data-tab="splash">🎨 Splash Manager</a>
+                    <a class="nav-link" data-tab="banners">🖼️ Banner Manager</a>
+                    <a class="nav-link" data-tab="coupons">🎫 Coupon Manager</a>
+                    <a class="nav-link" data-tab="notifications">🔔 Notifications</a>
+                    <a class="nav-link" data-tab="returns">↩️ Customer Returns</a>
+                    <a class="nav-link" data-tab="settlements">💰 Seller Settlements</a>
+                    <a class="nav-link" data-tab="delivery">🛵 Delivery Boys</a>
+                    <a class="nav-link" data-tab="affiliate">🔗 Affiliate Products</a>
                 </nav>
-                <button id="logout-btn" class="btn btn-danger">Logout</button>
+                <button id="logout-btn" class="btn">Sign Out</button>
             </div>
 
             <div id="main-content">
                 <div class="header">
-                    <h1 class="logo">Dashboard</h1>
+                    <h1 class="logo">Overview</h1>
+                    <div id="user-info">
+                        <span style="background: #D1FAE5; color: #065F46; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">A</span>
+                        Administrator
+                    </div>
                 </div>
 
                 <div id="splash-section" class="tab-content">
@@ -252,8 +447,10 @@
                         <h2>Upload New Splash Image</h2>
                         <form id="upload-form">
                             <div id="upload-error" class="error-message hidden"></div>
-                            <div class="form-group"><label for="media-splash">Image File</label><input type="file" id="media-splash" name="media" accept="image/*" required></div>
-                            <div class="form-group"><label for="title">Title (Optional)</label><input type="text" id="title" name="title" placeholder="e.g., Diwali Special"></div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="media-splash">Image File</label><input type="file" id="media-splash" name="media" accept="image/*" required></div>
+                                <div class="form-group"><label for="title">Title (Optional)</label><input type="text" id="title" name="title" placeholder="e.g., Diwali Special"></div>
+                            </div>
                             <button type="submit" class="btn btn-primary">Upload Image</button>
                         </form>
                     </div>
@@ -262,9 +459,9 @@
                 <div id="banners-section" class="tab-content hidden">
                     <div class="card">
                         <h2>Current Home Banners</h2>
-                        <div style="margin-bottom: 15px; font-size: 0.9em; color: #666;">
-                            <span style="display:inline-block; width:10px; height:10px; background:var(--success-color); border-radius:50%; margin-right:5px;"></span>Active
-                            <span style="display:inline-block; width:10px; height:10px; background:#ccc; border-radius:50%; margin-left:15px; margin-right:5px;"></span>Inactive
+                        <div style="margin-bottom: 15px; font-size: 0.85em; color: #666; display: flex; gap: 15px; align-items: center;">
+                            <span style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:var(--success-color); border-radius:50%;"></span> Active</span>
+                            <span style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; background:#ccc; border-radius:50%;"></span> Inactive</span>
                         </div>
                         <div id="banner-grid" class="splash-grid"></div>
                     </div>
@@ -272,38 +469,30 @@
                         <h2 id="banner-form-title">Upload New Banner</h2>
                         <form id="banner-upload-form">
                             <div id="banner-upload-error" class="error-message hidden"></div>
-                            
                             <input type="hidden" id="edit-banner-id">
-
                             <div class="form-group">
                                 <label for="media-banner" id="media-banner-label">Banner Image File (Required)</label>
                                 <input type="file" id="media-banner" name="media" accept="image/*">
                                 <small style="color: #666; display: none; margin-top: 5px;" id="edit-image-hint">Leave empty to keep current image.</small>
                             </div>
-                            
                             <div class="form-row">
-                                <div>
-                                    <label for="banner-title">Title/Link (Optional)</label>
-                                    <input type="text" id="banner-title" name="title" placeholder="e.g., Summer Sale Link">
-                                </div>
+                                <div><label for="banner-title">Title/Link (Optional)</label><input type="text" id="banner-title" name="title" placeholder="e.g., Summer Sale Link"></div>
                                 <div>
                                     <label for="banner-position">Position</label>
                                     <select id="banner-position" name="position">
-                                        <option value="hero">Hero Slider (Top)</option>
-                                        <option value="mid-section">Mid Section</option>
+                                        <option value="top">Hero Slider (Top)</option>
+                                        <option value="middle">Mid Section</option>
                                         <option value="bottom">Bottom Section</option>
                                     </select>
                                 </div>
                             </div>
-
-                             <div class="form-group">
+                            <div class="form-group">
                                 <label for="banner-active">Status</label>
-                                 <select id="banner-active" name="isActive">
-                                     <option value="true" selected>Active (Visible)</option>
-                                     <option value="false">Inactive (Hidden)</option>
-                                 </select>
+                                <select id="banner-active" name="isActive">
+                                    <option value="true" selected>Active (Visible)</option>
+                                    <option value="false">Inactive (Hidden)</option>
+                                </select>
                             </div>
-
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
                                 <button type="submit" class="btn btn-primary" id="banner-submit-btn">Upload Banner</button>
                                 <button type="button" class="btn btn-warning hidden" id="banner-cancel-edit-btn">Cancel Edit</button>
@@ -314,26 +503,22 @@
 
                 <div id="coupons-section" class="tab-content hidden">
                     <div class="card">
-                        <h2>Current Coupons</h2>
-                        <div id="coupon-list" style="overflow-x: auto;"></div>
-                    </div>
-                    <div class="card">
                         <h2>Create New Coupon</h2>
                         <form id="coupon-form">
                             <div id="coupon-error" class="error-message hidden"></div>
                             <div class="form-row">
-                                <div><label for="code">Coupon Code</label><input type="text" id="code" name="code" required></div>
+                                <div><label for="code">Coupon Code</label><input type="text" id="code" name="code" placeholder="SUMMER25" required style="text-transform: uppercase; letter-spacing: 1px;"></div>
                                 <div><label for="expiryDate">Expiry Date</label><input type="date" id="expiryDate" name="expiryDate" required></div>
                             </div>
                             <div class="form-row">
                                 <div>
                                     <label for="discountType">Discount Type</label>
                                     <select id="discountType" name="discountType">
-                                        <option value="percentage">Percentage</option>
-                                        <option value="fixed">Fixed Amount</option>
+                                        <option value="percentage">Percentage (%)</option>
+                                        <option value="fixed">Fixed Amount (₹)</option>
                                     </select>
                                 </div>
-                                <div><label for="discountValue">Value (e.g., 10 or 100)</label><input type="number" id="discountValue" name="discountValue" step="any" required></div>
+                                <div><label for="discountValue">Value</label><input type="number" id="discountValue" name="discountValue" placeholder="e.g. 20" step="any" required></div>
                             </div>
                             <div class="form-row">
                                 <div><label for="minPurchaseAmount">Min Purchase (Optional)</label><input type="number" id="minPurchaseAmount" name="minPurchaseAmount" step="any"></div>
@@ -342,6 +527,10 @@
                             <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Create Coupon</button>
                         </form>
                     </div>
+                    <div class="card">
+                        <h2>Active Coupons</h2>
+                        <div id="coupon-list" style="overflow-x: auto;"></div>
+                    </div>
                 </div>
                 
                 <div id="notifications-section" class="tab-content hidden">
@@ -349,20 +538,11 @@
                         <h2>Send Broadcast Notification</h2>
                         <form id="notification-form">
                             <div id="notification-status" class="hidden" style="margin-bottom: 15px;"></div>
-                            
-                            <div class="form-group">
-                                <label for="notification-title">Title</label>
-                                <input type="text" id="notification-title" name="title" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="notification-message">Message</label>
-                                <textarea id="notification-message" name="message" rows="4" required></textarea>
-                            </div>
-                            
+                            <div class="form-group"><label for="notification-title">Title</label><input type="text" id="notification-title" name="title" required></div>
+                            <div class="form-group"><label for="notification-message">Message</label><textarea id="notification-message" name="message" rows="4" required></textarea></div>
                             <div class="form-group">
                                 <label style="margin-bottom: 10px; display: block;">When to send?</label>
-                                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                                <div style="display: flex; gap: 20px; margin-bottom: 15px; background: #f9fafb; padding: 15px; border-radius: 8px;">
                                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
                                         <input type="radio" name="sendType" value="now" checked onclick="toggleScheduleInput(false)"> 
                                         <strong>Send Now</strong>
@@ -373,12 +553,10 @@
                                     </label>
                                 </div>
                             </div>
-
-                            <div class="form-group hidden" id="schedule-container" style="background: #f1f1f1; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-                                <label for="scheduledAt" style="color: var(--primary-dark);">Select Date & Time</label>
+                            <div class="form-group hidden" id="schedule-container" style="background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #dbeafe;">
+                                <label for="scheduledAt" style="color: var(--info-color);">Select Date & Time</label>
                                 <input type="datetime-local" id="scheduledAt" name="scheduledAt" style="background: white;">
                             </div>
-
                             <div class="form-row">
                                 <div>
                                     <label for="notification-target">Target Audience</label>
@@ -389,10 +567,7 @@
                                         <option value="delivery_boys">Delivery Boys Only</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="notification-image">Image (Optional)</label>
-                                    <input type="file" id="notification-image" name="media" accept="image/*">
-                                </div>
+                                <div><label for="notification-image">Image (Optional)</label><input type="file" id="notification-image" name="media" accept="image/*"></div>
                             </div>
                             <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 15px; padding: 12px;">Send Notification</button>
                         </form>
@@ -401,13 +576,14 @@
 
                 <div id="returns-section" class="tab-content hidden">
                     <div class="card">
-                        <h2>Pending Return Requests</h2>
+                        <h2>Customer Return Requests</h2>
                         <div id="return-requests-list" style="overflow-x: auto;">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Order ID</th>
                                         <th>Customer</th>
+                                        <th>Seller Name</th>
                                         <th>Amount</th>
                                         <th>Reason</th>
                                         <th>Payment Details</th> 
@@ -416,7 +592,36 @@
                                     </tr>
                                 </thead>
                                 <tbody id="returns-table-body">
-                                    <tr><td colspan="7">Loading return requests...</td></tr>
+                                    <tr><td colspan="8">Loading return requests...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settlements-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Seller Payout Requests</h2>
+                        <div style="background: var(--warning-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--warning-color);">
+                             <strong style="color: #92400E;">How to Process:</strong><br>
+                             <small style="color: #92400E;">1. Pay the seller using the <strong>UPI ID</strong> or Bank Details shown.<br>
+                             2. Click "Settle Payment" and enter the Transaction ID.</small>
+                        </div>
+                        <div id="settlements-list" style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Req ID</th>
+                                        <th>Seller Info</th>
+                                        <th>Claim Amount</th>
+                                        <th>UPI ID / Bank Details</th>
+                                        <th>Date Requested</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="settlements-table-body">
+                                    <tr><td colspan="7">Loading payouts...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -425,7 +630,7 @@
 
                 <div id="delivery-section" class="tab-content hidden">
                     <div class="card">
-                        <h2>Available Delivery Boys</h2>
+                        <h2>Registered Delivery Boys</h2>
                         <div id="delivery-boys-list" style="overflow-x: auto;">
                             <table>
                                 <thead>
@@ -444,35 +649,107 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <div id="affiliate-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2 id="aff-form-title">Add Affiliate Product</h2>
+                        <form id="affiliate-form">
+                            <div id="affiliate-error" class="error-message hidden"></div>
+                            <input type="hidden" id="edit-affiliate-id">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input type="text" name="name" id="aff-name" placeholder="e.g. iPhone 15" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Platform</label>
+                                    <select name="platform" id="aff-platform">
+                                        <option value="Amazon">Amazon</option>
+                                        <option value="Flipkart">Flipkart</option>
+                                        <option value="Myntra">Myntra</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Affiliate Link (URL)</label>
+                                    <input type="url" name="affiliateLink" id="aff-link" placeholder="https://amzn.to/..." required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Product Image</label>
+                                    <input type="file" name="media" id="aff-image" accept="image/*">
+                                    <small id="aff-img-hint" style="display:none; color:#666;">Leave empty to keep current image</small>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Display Price (₹)</label>
+                                    <input type="number" name="price" id="aff-price" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Original Price (MRP)</label>
+                                    <input type="number" name="originalPrice" id="aff-mrp">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" id="aff-desc" rows="2" placeholder="Short description..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="isActive" id="aff-active">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button type="submit" class="btn btn-primary" id="aff-submit-btn">Add Product</button>
+                                <button type="button" class="btn btn-warning hidden" id="aff-cancel-btn">Cancel Edit</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2>Affiliate Product List</h2>
+                        <div id="affiliate-list-container" class="splash-grid">
+                            </div>
+                    </div>
+                </div>
+                </div>
         </div>
     </div>
 
     <div id="assign-delivery-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Approve Return & Queue Pickup</h3>
+                <h3>Approve Customer Return</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div id="modal-error" class="error-message hidden"></div>
-            
-            <div id="approval-text" style="line-height: 1.5;">
+            <div id="approval-text" style="line-height: 1.6; color: #4B5563;">
                 <p>By clicking <strong>'Approve Return'</strong>, you authorize the return process.</p>
-                <p>The system will create a <strong>'ReturnPending'</strong> job that an available delivery boy in the customer's area can accept for pickup.</p>
-                <p class="warning-message" style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
-                    ⚠️ Ensure you have reviewed the refund reason and payment details in the table before proceeding.
-                </p>
+                <p>The system will automatically create a <strong>'ReturnPending'</strong> job for a delivery boy.</p>
+                <div style="margin-top: 20px; padding: 15px; background: #FFF7ED; border-radius: 8px; border-left: 4px solid #F97316;">
+                    <strong style="color: #C2410C;">⚠️ Note:</strong> Ensure you have reviewed the refund reason and payment details before proceeding.
+                </div>
             </div>
-
-            <div style="text-align: right; margin-top: 20px;">
-                <button id="confirm-approval" class="btn btn-primary">Approve Return</button>
+            <div style="text-align: right; margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-warning" onclick="closeApproveReturnModal()">Cancel</button>
+                <button id="confirm-approval" class="btn btn-primary">Confirm & Approve</button>
             </div>
         </div>
     </div>
 
     <script>
         // ================================================================
-        // IMPORTANT: Replace with your actual live server URL if different
+        // IMPORTANT: Replace with your actual live server URL
         // ================================================================
         const API_BASE_URL = 'https://hdvideo-1.onrender.com'; 
 
@@ -488,16 +765,13 @@
         const sidebar = document.getElementById('sidebar');
         const menuToggle = document.getElementById('menu-toggle');
 
-        // Splash Elements
+        // Splash & Banner Elements
         const uploadForm = document.getElementById('upload-form');
         const splashGrid = document.getElementById('splash-grid');
         const uploadError = document.getElementById('upload-error');
-
-        // === NEW BANNER ELEMENTS ===
         const bannerUploadForm = document.getElementById('banner-upload-form');
         const bannerGrid = document.getElementById('banner-grid');
         const bannerUploadError = document.getElementById('banner-upload-error');
-        // New elements for Edit feature
         const bannerFormTitle = document.getElementById('banner-form-title');
         const bannerSubmitBtn = document.getElementById('banner-submit-btn');
         const bannerCancelEditBtn = document.getElementById('banner-cancel-edit-btn');
@@ -509,13 +783,14 @@
         const bannerActiveSelect = document.getElementById('banner-active');
         const bannerTitleInput = document.getElementById('banner-title');
         
-        // Coupon & Other Elements
+        // Coupon, Notif, Return, Settlement Elements
         const couponForm = document.getElementById('coupon-form');
         const couponList = document.getElementById('coupon-list');
         const couponError = document.getElementById('coupon-error');
         const notificationForm = document.getElementById('notification-form');
         const notificationStatus = document.getElementById('notification-status');
         const returnsTableBody = document.getElementById('returns-table-body');
+        const settlementsTableBody = document.getElementById('settlements-table-body'); // New
         const deliveryTableBody = document.getElementById('delivery-table-body');
 
         // Modal elements
@@ -536,14 +811,13 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             try {
-                // Using the login route from server.js
                 const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
                 const data = await response.json();
-                if (!await response.ok || data.user?.role !== 'admin') {
+                if (!response.ok || data.user?.role !== 'admin') {
                     throw new Error(data.message || 'Login failed. Ensure you are an admin.');
                 }
                 localStorage.setItem('admin_token', data.token);
@@ -567,46 +841,32 @@
         const showDashboard = () => {
             loginContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
-            // Trigger click on the active tab or default to first
             const activeTab = document.querySelector('.sidebar-nav .nav-link.active') || navLinks[0];
             if(activeTab) activeTab.click(); 
         };
         
-        const toggleSidebar = () => {
-            sidebar.classList.toggle('open');
-        };
+        const toggleSidebar = () => sidebar.classList.toggle('open');
 
         // Tab Navigation Logic
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                // Close sidebar on mobile automatically
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('open');
-                }
-                
-                // Update active link state
+                if (window.innerWidth <= 768) sidebar.classList.remove('open');
                 navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
                 const tab = link.getAttribute('data-tab');
                 
-                // Show appropriate tab content
                 tabContents.forEach(content => {
                     content.id === `${tab}-section` ? content.classList.remove('hidden') : content.classList.add('hidden');
                 });
 
-                // Trigger data fetches based on active tab
                 if (tab === 'splash') fetchSplashScreens();
-                
-                // Banner specific logic: reset form if leaving tab, fetch if entering
                 if (tab !== 'banners') resetBannerForm();
                 if (tab === 'banners') fetchBanners(); 
-
                 if (tab === 'coupons') fetchCoupons();
-                if (tab === 'returns') { 
-                    fetchDeliveryBoys(); // Fetch boys first to have context if needed later
-                    fetchReturnRequests();
-                }
+                if (tab === 'returns') fetchReturnRequests();
+                if (tab === 'settlements') fetchSettlements(); // New
                 if (tab === 'delivery') fetchDeliveryBoys();
+                if (tab === 'affiliate') fetchAffiliateProducts(); // ✅ LOAD AFFILIATE
             });
         });
 
@@ -648,7 +908,7 @@
         };
 
         const handleDeleteSplash = async (id) => {
-            if (!confirm('Are you sure you want to delete this splash screen?')) return;
+            if (!confirm('Are you sure?')) return;
             const token = localStorage.getItem('admin_token');
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/splash/${id}`, {
@@ -675,57 +935,42 @@
                         <strong style="display: block; margin-bottom: 5px;">${splash.title || 'No Title'}</strong>
                         <p style="font-size:0.9em; color:#777; margin: 0;">Type: ${splash.type}</p>
                     </div>
-                    <button class="delete-btn" onclick="handleDeleteSplash('${splash._id}')" title="Delete">X</button>
+                    <button class="delete-btn" onclick="handleDeleteSplash('${splash._id}')" title="Delete">✕</button>
                 `;
                 splashGrid.appendChild(card);
             });
         };
 
         // ==================================================
-        // === NEW & UPDATED BANNER MANAGER FUNCTIONS ===
+        // === BANNER MANAGER FUNCTIONS ===
         // ==================================================
-
-        // Helper to reset banner form back to "Upload Mode" state
         const resetBannerForm = () => {
             bannerUploadForm.reset();
-            editBannerIdInput.value = ''; // Clear hidden ID value
+            editBannerIdInput.value = '';
             bannerFormTitle.textContent = 'Upload New Banner';
             bannerSubmitBtn.textContent = 'Upload Banner';
-            bannerCancelEditBtn.classList.add('hidden'); // Hide cancel button
+            bannerCancelEditBtn.classList.add('hidden');
             bannerUploadError.classList.add('hidden');
-            
-            // Reset image input UI to required state
             mediaBannerInput.required = true;
             mediaBannerLabel.textContent = 'Banner Image File (Required)';
             editImageHint.style.display = 'none';
-            bannerActiveSelect.value = 'true'; // Default to active
-            bannerPositionSelect.value = 'hero'; // Default position
+            bannerActiveSelect.value = 'true';
+            bannerPositionSelect.value = 'top';
         };
 
-        // Helper to populate form for editing when "Edit" button is clicked on a banner card
         window.handleEditBannerBtnClick = (bannerDataString) => {
-            // Decode stringified object back to JSON
             const banner = JSON.parse(decodeURIComponent(bannerDataString));
-            
-            // Populate form fields with existing data
             editBannerIdInput.value = banner._id;
             bannerTitleInput.value = banner.title || '';
-            // Map position value if server uses different names, otherwise use directly
-            bannerPositionSelect.value = banner.position || 'hero'; 
+            bannerPositionSelect.value = banner.position || 'top'; 
             bannerActiveSelect.value = banner.isActive ? 'true' : 'false';
-
-            // Update UI elements for "Edit Mode"
             bannerFormTitle.textContent = 'Edit Banner';
             bannerSubmitBtn.textContent = 'Update Banner';
-            bannerCancelEditBtn.classList.remove('hidden'); // Show cancel button
+            bannerCancelEditBtn.classList.remove('hidden');
             bannerUploadError.classList.add('hidden');
-
-            // Image is optional during edit (only upload if changing)
             mediaBannerInput.required = false;
             mediaBannerLabel.textContent = 'Change Banner Image (Optional)';
             editImageHint.style.display = 'block';
-
-            // Smooth scroll to the form so user sees it
             document.getElementById('banner-form-card').scrollIntoView({ behavior: 'smooth' });
         };
 
@@ -733,7 +978,6 @@
             const token = localStorage.getItem('admin_token');
             if (!token) return handleLogout();
             try {
-                // Using correct API endpoint from server.js structure
                 const response = await fetch(`${API_BASE_URL}/api/admin/banners`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -743,63 +987,47 @@
             } catch (error) { console.error('Error fetching banners:', error); }
         };
 
-        // Updated Handle Upload handles BOTH Create (POST) and Edit (PUT) logic
         const handleBannerUpload = async (e) => {
             e.preventDefault();
             bannerUploadError.classList.add('hidden');
             const token = localStorage.getItem('admin_token');
-            
             const bannerId = editBannerIdInput.value;
-            const isEditMode = !!bannerId; // Boolean check if ID exists
-
+            const isEditMode = !!bannerId;
             const formData = new FormData();
             const mediaFile = mediaBannerInput.files[0];
             const title = bannerTitleInput.value;
             const position = bannerPositionSelect.value;
             const isActive = bannerActiveSelect.value;
 
-            // Validation: Image is required only for *new* uploads
             if (!isEditMode && !mediaFile) {
                 bannerUploadError.textContent = "Please select an image file for a new banner.";
                 bannerUploadError.classList.remove('hidden');
                 return;
             }
-
-            // Append fields expected by server.js schema
-            if (mediaFile) {
-                // Only append media if a new file was selected
-                formData.append('media', mediaFile);
-            }
+            if (mediaFile) formData.append('media', mediaFile);
             formData.append('title', title || ''); 
-            // Using title as link input for now based on UI. Adjust if separate link field added.
             formData.append('link', title || ''); 
             formData.append('position', position); 
-            formData.append('isActive', isActive); // Sends 'true' or 'false' string
-            formData.append('type', 'image');    // Hardcoded as image type
+            formData.append('isActive', isActive);
+            formData.append('type', 'image');
 
             try {
-                // Determine URL and Method based on mode
                 let url = `${API_BASE_URL}/api/admin/banners`;
                 let method = 'POST';
-
                 if (isEditMode) {
-                     url = `${API_BASE_URL}/api/admin/banners/${bannerId}`;
-                     method = 'PUT';
+                      url = `${API_BASE_URL}/api/admin/banners/${bannerId}`;
+                      method = 'PUT';
                 }
-
                 const response = await fetch(url, {
                     method: method,
                     headers: { 'Authorization': `Bearer ${token}` },
-                    // Browser automatically sets Content-Type to multipart/form-data for FormData
                     body: formData
                 });
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.message || (isEditMode ? 'Update failed.' : 'Upload failed.'));
-                
-                resetBannerForm(); // Reset form back to upload mode upon success
-                fetchBanners(); // Refresh grid list
+                if (!response.ok) throw new Error(data.message || 'Operation failed.');
+                resetBannerForm();
+                fetchBanners();
                 if(isEditMode) alert("Banner updated successfully!");
-
             } catch (error) {
                 bannerUploadError.textContent = error.message;
                 bannerUploadError.classList.remove('hidden');
@@ -807,25 +1035,19 @@
         };
 
         const handleDeleteBanner = async (id) => {
-            if (!confirm('Are you sure you want to delete this banner?')) return;
+            if (!confirm('Delete this banner?')) return;
             const token = localStorage.getItem('admin_token');
             try {
-                // Using correct delete endpoint from server.js
                 const response = await fetch(`${API_BASE_URL}/api/admin/banners/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error('Failed to delete banner.');
-                
-                // If we deleted the banner currently being edited, reset the form
-                if(editBannerIdInput.value === id) {
-                    resetBannerForm();
-                }
+                if (!response.ok) throw new Error('Failed to delete.');
+                if(editBannerIdInput.value === id) resetBannerForm();
                 fetchBanners();
             } catch (error) { alert(error.message); }
         };
 
-        // Updated Render Banners to include Edit button and status indicators
         const renderBanners = (banners) => {
             bannerGrid.innerHTML = '';
             if (!banners || banners.length === 0) {
@@ -835,26 +1057,22 @@
             banners.forEach(banner => {
                 const card = document.createElement('div');
                 card.className = 'splash-card'; 
-                
-                // Determine status color border visualization
                 const statusColor = banner.isActive ? 'var(--success-color)' : '#ccc';
                 card.style.borderBottom = `4px solid ${statusColor}`;
-
-                // Prepare data for edit button (encode object to safely pass in HTML attribute)
                 const bannerDataSafe = encodeURIComponent(JSON.stringify(banner));
 
                 card.innerHTML = `
                     <img src="${banner.image?.url || ''}" alt="${banner.title || 'Banner'}" style="height: 120px;">
-                    <div class="info" style="padding: 10px;">
+                    <div class="info" style="padding: 15px;">
                         <strong style="display:block; margin-bottom:5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${banner.title || 'No Title'}</strong>
                         <div style="font-size:0.85em; color:#666;">
-                            <span style="text-transform: capitalize; font-weight:500;">${banner.position || 'Hero'}</span>
+                            <span style="text-transform: capitalize; font-weight: 500;">${banner.position || 'Hero'}</span>
                              | <span style="color: ${banner.isActive ? 'var(--success-color)':'#999'}">${banner.isActive ? 'Active' : 'Inactive'}</span>
                         </div>
                     </div>
                     <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px;">
-                        <button class="btn btn-info" style="padding: 4px 10px; font-size: 0.8rem; margin:0;" onclick="handleEditBannerBtnClick('${bannerDataSafe}')" title="Edit">Edit</button>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem; margin:0;" onclick="handleDeleteBanner('${banner._id}')" title="Delete">X</button>
+                        <button class="btn btn-info" style="padding: 6px 12px; font-size: 0.8rem; margin:0; background:white; color: var(--info-color); border: 1px solid var(--info-color);" onclick="handleEditBannerBtnClick('${bannerDataSafe}')">Edit</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem; margin:0;" onclick="handleDeleteBanner('${banner._id}')">✕</button>
                     </div>
                 `;
                 bannerGrid.appendChild(card);
@@ -879,7 +1097,7 @@
         const renderCoupons = (coupons) => {
             couponList.innerHTML = '';
             if (!coupons || coupons.length === 0) {
-                couponList.innerHTML = '<p>No coupons found.</p>';
+                couponList.innerHTML = '<p style="padding: 20px; color: #666;">No active coupons found.</p>';
                 return;
             }
             const table = document.createElement('table');
@@ -888,13 +1106,13 @@
             coupons.forEach(c => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${c.code}</strong></td>
-                    <td>${c.discountType}</td>
-                    <td>${c.discountType === 'percentage' ? `${c.discountValue}%` : `₹${c.discountValue}`}</td>
+                    <td><span style="background: #F3F4F6; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-weight: 700;">${c.code}</span></td>
+                    <td style="text-transform: capitalize;">${c.discountType}</td>
+                    <td style="font-weight: 600; color: var(--success-color);">${c.discountType === 'percentage' ? `${c.discountValue}%` : `₹${c.discountValue}`}</td>
                     <td>₹${c.minPurchaseAmount || 0}</td>
                     <td>${new Date(c.expiryDate).toLocaleDateString()}</td>
-                    <td>${c.isActive ? '<span style="color:var(--primary-color)">Active</span>' : '<span style="color:#999">Inactive</span>'}</td>
-                    <td><button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem;" onclick="handleDeleteCoupon('${c._id}')">Delete</button></td>
+                    <td>${c.isActive ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-inactive">Inactive</span>'}</td>
+                    <td><button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.75rem;" onclick="handleDeleteCoupon('${c._id}')">Delete</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -923,7 +1141,7 @@
         };
 
         const handleDeleteCoupon = async (id) => {
-            if (!confirm('Are you sure you want to delete this coupon?')) return;
+            if (!confirm('Delete this coupon?')) return;
             const token = localStorage.getItem('admin_token');
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/coupons/${id}`, {
@@ -938,8 +1156,6 @@
         // ==========================================
         // --- Notification Functions ---
         // ==========================================
-        
-        // Helper function to toggle UI for scheduling
         window.toggleScheduleInput = (show) => {
             const container = document.getElementById('schedule-container');
             const input = document.getElementById('scheduledAt');
@@ -948,7 +1164,7 @@
                 input.required = true;
             } else {
                 container.classList.add('hidden');
-                input.value = ''; // Clear input to ensure immediate send
+                input.value = ''; 
                 input.required = false;
             }
         }
@@ -957,7 +1173,6 @@
             e.preventDefault();
             notificationStatus.className = 'hidden';
             const token = localStorage.getItem('admin_token');
-            
             const formData = new FormData(notificationForm);
             const scheduledAt = formData.get('scheduledAt');
 
@@ -969,12 +1184,8 @@
 
             try {
                 let response;
-                
-                // Logic: If schedule input has value, use Schedule API. Else use Broadcast.
                 if (scheduledAt) {
-                    // Ensure consistent naming: Schedule API expects 'body' instead of 'message'
                     formData.append('body', formData.get('message'));
-                    
                     response = await fetch(`${API_BASE_URL}/api/admin/notifications/schedule`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` },
@@ -987,17 +1198,13 @@
                         body: formData
                     });
                 }
-
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.message || 'Failed to send notification.');
-                
-                notificationStatus.textContent = scheduledAt ? 'Success! Notification Scheduled.' : 'Success! Notification Sent.';
+                if (!response.ok) throw new Error(result.message || 'Failed to send.');
+                notificationStatus.textContent = scheduledAt ? 'Notification Scheduled.' : 'Notification Sent.';
                 notificationStatus.className = 'success-message';
                 notificationForm.reset();
-                // Reset back to "Send Now" default state
                 toggleScheduleInput(false);
                 document.querySelector('input[value="now"]').checked = true;
-
             } catch (error) {
                 notificationStatus.textContent = error.message;
                 notificationStatus.className = 'error-message';
@@ -1005,76 +1212,69 @@
         };
         
         // ==========================================
-        // --- Returns Manager Functions ---
+        // --- Customer Returns Functions ---
         // ==========================================
         const fetchReturnRequests = async () => {
             const token = localStorage.getItem('admin_token');
             if (!token) return handleLogout();
-            returnsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading...</td></tr>';
+            returnsTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px;">Loading...</td></tr>';
 
             try {
-                // Using the general orders endpoint and filtering client-side based on server.js routes
                 const response = await fetch(`${API_BASE_URL}/api/admin/orders`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.status === 401) return handleLogout();
                 const orders = await response.json();
                 
-                // Filter for relevant return statuses
                 const pendingReturns = orders.filter(o => 
                     o.deliveryStatus === 'Return Requested' || 
                     o.deliveryStatus === 'Return Accepted by Admin'
                 );
-                
                 renderReturnRequests(pendingReturns);
             } catch (error) { 
-                console.error('Error fetching returns:', error);
-                returnsTableBody.innerHTML = '<tr><td colspan="7" class="error-message" style="text-align:center; padding: 20px;">Error fetching requests. Check console.</td></tr>';
+                console.error('Error:', error);
+                returnsTableBody.innerHTML = '<tr><td colspan="8" class="error-message" style="text-align:center;">Error fetching requests.</td></tr>';
             }
         };
 
         const renderReturnRequests = (orders) => {
             returnsTableBody.innerHTML = '';
             if (!orders || orders.length === 0) {
-                returnsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color: #777;">No pending return requests.</td></tr>';
+                returnsTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 30px; color: #777;">No pending return requests.</td></tr>';
                 return;
             }
-
             orders.forEach(order => {
-                // Calculate grand total (approximate based on schema)
                 const grandTotal = (order.totalAmount + (order.shippingFee || 0) + (order.taxAmount || 0)) - (order.discountAmount || 0);
-                
-                // Find the relevant refund request details
                 const refundRequest = order.refunds ? order.refunds.findLast(r => ['requested', 'pending', 'approved'].includes(r.status)) : null;
                 const customerName = order.user?.name || 'N/A';
+                
+                let sellerName = 'Admin/Multi';
+                if(order.items && order.items.length > 0 && order.items[0].product && order.items[0].product.seller) {
+                    sellerName = order.items[0].product.seller.name || 'Unknown Seller';
+                }
 
                 let paymentDisplay = '<span style="color:#999">Not Provided</span>';
                 if (refundRequest) {
                     if (refundRequest.upiId) {
-                        paymentDisplay = `<strong style="color:var(--primary-dark)">UPI:</strong> ${refundRequest.upiId}`;
+                        paymentDisplay = `<strong style="color:var(--upi-color)">UPI:</strong> ${refundRequest.upiId}`;
                     } else if (refundRequest.bankAccountNumber) {
-                            paymentDisplay = `
-                            <div style="font-size:0.9em; line-height:1.4;">
-                                <strong>Bank:</strong> ${refundRequest.bankAccountNumber}<br>
-                                <strong>IFSC:</strong> ${refundRequest.ifsc}
-                            </div>
-                            `;
+                            paymentDisplay = `<div style="font-size:0.9em;"><strong>Bank:</strong> ${refundRequest.bankAccountNumber}<br><strong>IFSC:</strong> ${refundRequest.ifsc}</div>`;
                     }
                 }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-family:monospace; font-weight:700;">#${order._id.slice(-6)}</td>
-                    <td>${customerName}</td>
+                    <td style="font-family:monospace; font-weight:700; color: var(--primary-dark);">#${order._id.slice(-6)}</td>
+                    <td><div style="font-weight:500;">${customerName}</div></td>
+                    <td style="color: #E65100; font-weight:500;">${sellerName}</td> 
                     <td style="font-weight:700;">₹${grandTotal.toFixed(2)}</td>
-                    <td>${refundRequest ? refundRequest.reason : 'N/A'}</td>
+                    <td style="max-width: 150px; overflow:hidden; text-overflow:ellipsis;">${refundRequest ? refundRequest.reason : 'N/A'}</td>
                     <td>${paymentDisplay}</td> 
                     <td><span class="status-badge status-requested">${order.deliveryStatus}</span></td>
                     <td>
                         <button 
                             class="btn btn-info" 
-                            style="padding: 6px 12px; font-size: 0.85rem;"
+                            style="padding: 6px 12px; font-size: 0.8rem;"
                             onclick="openApproveReturnModal('${order._id}')"
                             ${order.deliveryStatus !== 'Return Requested' ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
                             Review & Approve
@@ -1086,6 +1286,107 @@
         };
 
         // ==========================================
+        // --- NEW: Seller Settlement Functions ---
+        // ==========================================
+        const fetchSettlements = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading settlements...</td></tr>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/payouts/pending`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.status === 404) {
+                     settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Endpoint /api/admin/payouts/pending not found.</td></tr>';
+                     return;
+                }
+                
+                const requests = await response.json();
+                renderSettlements(requests);
+            } catch (error) {
+                console.error('Error fetching settlements:', error);
+                settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No active settlement requests found.</td></tr>';
+            }
+        };
+
+        const renderSettlements = (requests) => {
+            settlementsTableBody.innerHTML = '';
+            if (!requests || requests.length === 0) {
+                settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 30px; color: #777;">No pending payout requests.</td></tr>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const statusClass = 'status-pending';
+                const displayStatus = req.status;
+                
+                // Parse and highlight UPI ID if present in notes
+                let notes = req.notes || 'No details provided';
+                
+                // Highlight VPA (UPI ID) in Purple/Bold
+                if (notes.includes("VPA:")) {
+                    notes = notes.replace('MANUAL TRANSFER:', '').trim();
+                    notes = notes.replace(/(VPA:)(.*)/, '$1 <strong style="color: var(--upi-color); font-size: 1.1em;">$2</strong>');
+                } else {
+                    // Style Bank Details
+                    notes = notes.replace('MANUAL TRANSFER:', '').trim();
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-family:monospace; font-weight: 700;">#${req._id.slice(-6)}</td>
+                    <td>
+                        <strong>${req.seller?.name || 'Unknown'}</strong><br>
+                        <span style="font-size:0.85em; color:#666;">${req.seller?.phone || 'N/A'}</span>
+                    </td>
+                    <td style="font-weight:700; color: var(--primary-dark); font-size: 1.1rem;">₹${req.amount}</td>
+                    <td style="font-size:0.9em; max-width: 280px; line-height: 1.5;">${notes}</td>
+                    <td>${new Date(req.createdAt).toLocaleDateString()}</td>
+                    <td><span class="status-badge ${statusClass}" style="text-transform:capitalize;">${displayStatus}</span></td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleSettlementAction('${req._id}')">Settle Payment</button>
+                    </td>
+                `;
+                settlementsTableBody.appendChild(tr);
+            });
+        };
+
+        window.handleSettlementAction = async (id) => {
+            const token = localStorage.getItem('admin_token');
+            
+            const transactionId = prompt("Please make the payment manually via UPI or Bank Transfer.\n\nEnter the Transaction ID (UTR) here to confirm:");
+            
+            if (transactionId === null) return; 
+            if (transactionId.trim() === "") {
+                alert("Transaction ID is required to mark the payout as Settled.");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/payouts/${id}/process`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ transactionId: transactionId, notes: "Manual Settlement via Admin Panel" })
+                });
+                
+                if(!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Action failed');
+                }
+                
+                alert("Payment marked as Settled successfully!");
+                fetchSettlements(); 
+            } catch(e) {
+                alert(e.message);
+            }
+        };
+
+        // ==========================================
         // --- Delivery Boys Functions ---
         // ==========================================
         const fetchDeliveryBoys = async () => {
@@ -1094,46 +1395,211 @@
             deliveryTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading...</td></tr>';
 
             try {
-                // Using correct endpoint from server.js
                 const response = await fetch(`${API_BASE_URL}/api/admin/delivery-boys`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.status === 401) return handleLogout();
                 const deliveryBoysData = await response.json();
                 renderDeliveryBoys(deliveryBoysData);
             } catch (error) { 
-                console.error('Error fetching delivery boys:', error);
-                deliveryTableBody.innerHTML = '<tr><td colspan="5" class="error-message" style="text-align:center; padding: 20px;">Error fetching delivery boys. Check console.</td></tr>';
+                deliveryTableBody.innerHTML = '<tr><td colspan="5" class="error-message" style="text-align:center;">Error fetching delivery boys.</td></tr>';
             }
         };
 
         const renderDeliveryBoys = (boys) => {
             deliveryTableBody.innerHTML = '';
             if (!boys || boys.length === 0) {
-                deliveryTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #777;">No delivery boys registered.</td></tr>';
+                deliveryTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: #777;">No delivery boys registered.</td></tr>';
                 return;
             }
             boys.forEach(boy => {
                 const tr = document.createElement('tr');
-                // Determine status based on role and approval
                 const isAvailable = boy.role === 'delivery' && boy.approved === true; 
-                const statusStyle = isAvailable ? 'background:#D4EDDA; color:#155724;' : 'background:#E2E3E5; color:#383D41;';
+                const statusStyle = isAvailable ? 'status-active' : 'status-inactive';
                 const statusText = isAvailable ? 'Active' : 'Inactive/Pending';
                 const pincodesList = boy.pincodes && boy.pincodes.length > 0 ? boy.pincodes.join(', ') : '<span style="color:#999">None assigned</span>';
 
                 tr.innerHTML = `
-                    <td><strong>${boy.name || 'N/A'}</strong></td>
+                    <td>
+                        <strong>${boy.name || 'N/A'}</strong>
+                    </td>
                     <td>${boy.phone || 'N/A'}</td>
                     <td>${pincodesList}</td>
-                    <td><span class="status-badge" style="${statusStyle}">${statusText}</span></td>
-                    <td>
-                        <button class="btn btn-warning" style="padding: 5px 10px; font-size: 0.85rem;" onclick="alert('Go to the main Admin Users/Sellers tab to manage approvals and roles.')">Manage Status</button>
-                    </td>
+                    <td><span class="status-badge ${statusStyle}">${statusText}</span></td>
+                    <td><button class="btn btn-warning" style="padding: 6px 12px; font-size: 0.8rem; background-color: #F59E0B; border-color: #F59E0B;" onclick="alert('Go to the main Admin Users/Sellers tab to manage approvals.')">Manage</button></td>
                 `;
                 deliveryTableBody.appendChild(tr);
             });
         };
+
+        // ==========================================
+        // --- ✅ NEW: Affiliate Marketing Functions ---
+        // ==========================================
+
+        // Elements
+        const affiliateForm = document.getElementById('affiliate-form');
+        const affiliateListContainer = document.getElementById('affiliate-list-container');
+        const affError = document.getElementById('affiliate-error');
+        const affSubmitBtn = document.getElementById('aff-submit-btn');
+        const affCancelBtn = document.getElementById('aff-cancel-btn');
+        const editAffIdInput = document.getElementById('edit-affiliate-id');
+
+        // 1. Fetch Products
+        const fetchAffiliateProducts = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            
+            affiliateListContainer.innerHTML = '<p>Loading...</p>';
+
+            try {
+                // Note: We use the public route to get list, as defined in your server
+                const response = await fetch(`${API_BASE_URL}/api/affiliate-products`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const products = await response.json();
+                renderAffiliateProducts(products);
+            } catch (error) {
+                console.error('Error fetching affiliate products:', error);
+                affiliateListContainer.innerHTML = '<p class="error-message">Failed to load products.</p>';
+            }
+        };
+
+        // 2. Render Products
+        const renderAffiliateProducts = (products) => {
+            affiliateListContainer.innerHTML = '';
+            if (!products || products.length === 0) {
+                affiliateListContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#777;">No affiliate products found.</p>';
+                return;
+            }
+
+            products.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'splash-card';
+                const statusColor = prod.isActive ? 'var(--success-color)' : '#ccc';
+                card.style.borderBottom = `4px solid ${statusColor}`;
+                
+                // Securely encode data for edit button
+                const prodDataSafe = encodeURIComponent(JSON.stringify(prod));
+
+                card.innerHTML = `
+                    <img src="${prod.image?.url || ''}" alt="${prod.name}" style="height: 140px; object-fit: contain; padding: 10px;">
+                    <div class="info" style="padding: 15px;">
+                        <div style="font-size: 0.8em; color: #666; text-transform: uppercase; letter-spacing: 1px;">${prod.platform}</div>
+                        <strong style="display:block; margin: 5px 0; font-size: 1.1em;">${prod.name}</strong>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color: var(--primary-dark); font-weight: bold;">₹${prod.price}</span>
+                            <span style="font-size: 0.85em; background: #eff6ff; padding: 2px 6px; border-radius: 4px;">🖱️ ${prod.clicks || 0} Clicks</span>
+                        </div>
+                    </div>
+                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                        <button class="btn btn-info" style="padding: 5px 10px; font-size: 0.75rem;" onclick="handleEditAffiliate('${prodDataSafe}')">Edit</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.75rem;" onclick="handleDeleteAffiliate('${prod._id}')">✕</button>
+                    </div>
+                    <a href="${prod.affiliateLink}" target="_blank" style="display:block; text-align:center; background:#f9fafb; padding:8px; font-size:0.85rem; text-decoration:none; color:var(--primary-color); border-top:1px solid #eee;">Check Link ↗</a>
+                `;
+                affiliateListContainer.appendChild(card);
+            });
+        };
+
+        // 3. Handle Form Submit (Add/Update)
+        affiliateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            affError.classList.add('hidden');
+            const token = localStorage.getItem('admin_token');
+            const formData = new FormData(affiliateForm);
+            
+            // Fix boolean conversion for isActive
+            const isActiveVal = document.getElementById('aff-active').value;
+            formData.set('isActive', isActiveVal); 
+
+            const id = editAffIdInput.value;
+            const isEdit = !!id;
+
+            try {
+                let url = `${API_BASE_URL}/api/admin/affiliate-products`;
+                let method = 'POST';
+
+                if (isEdit) {
+                    url = `${API_BASE_URL}/api/admin/affiliate-products/${id}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Operation failed');
+
+                alert(isEdit ? 'Product Updated!' : 'Product Added!');
+                resetAffiliateForm();
+                fetchAffiliateProducts();
+
+            } catch (error) {
+                affError.textContent = error.message;
+                affError.classList.remove('hidden');
+            }
+        });
+
+        // 4. Edit Mode
+        window.handleEditAffiliate = (prodDataString) => {
+            const prod = JSON.parse(decodeURIComponent(prodDataString));
+            editAffIdInput.value = prod._id;
+            
+            document.getElementById('aff-name').value = prod.name;
+            document.getElementById('aff-platform').value = prod.platform;
+            document.getElementById('aff-link').value = prod.affiliateLink;
+            document.getElementById('aff-price').value = prod.price;
+            document.getElementById('aff-mrp').value = prod.originalPrice || '';
+            document.getElementById('aff-desc').value = prod.description || '';
+            document.getElementById('aff-active').value = prod.isActive ? 'true' : 'false';
+
+            document.getElementById('aff-image').required = false;
+            document.getElementById('aff-img-hint').style.display = 'block';
+            document.getElementById('aff-form-title').textContent = 'Edit Affiliate Product';
+            affSubmitBtn.textContent = 'Update Product';
+            affCancelBtn.classList.remove('hidden');
+
+            // Scroll to form
+            affiliateForm.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // 5. Delete Product
+        window.handleDeleteAffiliate = async (id) => {
+            if(!confirm('Are you sure you want to delete this product?')) return;
+            const token = localStorage.getItem('admin_token');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/affiliate-products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if(!response.ok) throw new Error('Delete failed');
+                
+                if(editAffIdInput.value === id) resetAffiliateForm();
+                fetchAffiliateProducts();
+                
+            } catch (error) {
+                alert(error.message);
+            }
+        };
+
+        // 6. Reset Form
+        const resetAffiliateForm = () => {
+            affiliateForm.reset();
+            editAffIdInput.value = '';
+            document.getElementById('aff-form-title').textContent = 'Add Affiliate Product';
+            affSubmitBtn.textContent = 'Add Product';
+            affCancelBtn.classList.add('hidden');
+            document.getElementById('aff-image').required = false; 
+            document.getElementById('aff-img-hint').style.display = 'none';
+        };
+
+        affCancelBtn.addEventListener('click', resetAffiliateForm);
+
 
         // ==========================================
         // --- Modal Functions ---
@@ -1152,7 +1618,6 @@
             if (!currentOrderId) return;
             const token = localStorage.getItem('admin_token');
             try {
-                // Using correct approve-return endpoint from server.js
                 const response = await fetch(`${API_BASE_URL}/api/admin/orders/${currentOrderId}/approve-return`, {
                     method: 'POST',
                     headers: { 
@@ -1161,10 +1626,10 @@
                     }
                 });
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.message || 'Failed to approve return request.');
-                alert('✅ Return Approved! A pickup job has been created for the delivery boy pool.');
+                if (!response.ok) throw new Error(result.message || 'Failed to approve return.');
+                alert('✅ Return Approved! Pickup job created.');
                 closeApproveReturnModal();
-                fetchReturnRequests(); // Refresh list
+                fetchReturnRequests();
             } catch (error) {
                 modalError.textContent = error.message;
                 modalError.classList.remove('hidden');
@@ -1178,31 +1643,22 @@
         logoutBtn.addEventListener('click', handleLogout);
         menuToggle.addEventListener('click', toggleSidebar);
         
-        // Splash Listeners
         uploadForm.addEventListener('submit', handleUpload);
-        // Attach to window for onclick access from HTML string
         window.handleDeleteSplash = handleDeleteSplash;
 
-        // NEW Banner Listeners
         bannerUploadForm.addEventListener('submit', handleBannerUpload);
         bannerCancelEditBtn.addEventListener('click', resetBannerForm);
-        // Attach to window for onclick access from HTML string
         window.handleDeleteBanner = handleDeleteBanner;
-        window.handleEditBannerBtnClick = handleEditBannerBtnClick;
         
-        // Other Listeners
         couponForm.addEventListener('submit', handleCouponCreate);
         notificationForm.addEventListener('submit', handleNotificationSend);
         confirmApprovalBtn.addEventListener('click', handleApproveReturn);
         closeModalBtn.addEventListener('click', closeApproveReturnModal);
-        // Close modal when clicking outside content area
         window.onclick = (event) => { if (event.target === assignDeliveryModal) closeApproveReturnModal(); };
         
-        // Attach remaining global handlers
         window.handleDeleteCoupon = handleDeleteCoupon;
         window.openApproveReturnModal = openApproveReturnModal;
 
-        // Check auth on load
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('admin_token')) {
                 showDashboard();
