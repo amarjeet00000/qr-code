@@ -119,6 +119,24 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
+        /* Special Style for SOS Tab */
+        .sidebar-nav a[data-tab="sos"] {
+            color: #FCA5A5; /* Light Red */
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .sidebar-nav a[data-tab="sos"]:hover, .sidebar-nav a[data-tab="sos"].active {
+            background: #EF4444;
+            color: white;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         #logout-btn {
             margin: 20px;
             width: calc(100% - 40px);
@@ -223,14 +241,21 @@
             background: white;
         }
 
+        /* Color Input Specific Style */
+        input[type="color"] {
+            height: 50px;
+            padding: 5px;
+            cursor: pointer;
+        }
+
         /* --- Buttons --- */
         .btn { 
             padding: 10px 20px; 
             border: none; 
             border-radius: var(--border-radius-sm); 
             cursor: pointer; 
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 600; 
+            font-size: 0.9rem; 
             transition: var(--transition); 
             display: inline-flex;
             align-items: center;
@@ -248,6 +273,10 @@
         .btn-warning { background: var(--warning-color); color: white; }
         .btn-info { background: var(--info-color); color: white; }
         .btn-info:hover { background: #2563EB; }
+        
+        /* New Button Style for Subcat */
+        .btn-subcat { background: #8B5CF6; color: white; }
+        .btn-subcat:hover { background: #7C3AED; }
 
         /* --- Modern Tables --- */
         table { 
@@ -260,20 +289,20 @@
         th { 
             text-align: left; 
             padding: 12px 15px; 
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-muted); 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
             border-bottom: 1px solid #E5E7EB;
         }
 
         td { 
-            background: white;
+            background: white; 
             padding: 16px 15px; 
-            color: #374151;
-            border-top: 1px solid #F3F4F6;
-            border-bottom: 1px solid #F3F4F6;
+            color: #374151; 
+            border-top: 1px solid #F3F4F6; 
+            border-bottom: 1px solid #F3F4F6; 
             font-size: 0.9rem;
         }
         
@@ -282,6 +311,13 @@
 
         tr { transition: var(--transition); }
         tbody tr:hover td { background-color: #F9FAFB; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        
+        /* SOS Table Row Style */
+        .sos-row td {
+            background-color: #FEF2F2 !important;
+            border-color: #FECACA !important;
+            color: #991B1B !important;
+        }
         
         /* --- Grid for Splash/Banners --- */
         .splash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
@@ -316,8 +352,8 @@
             border-radius: 20px; 
             font-size: 0.75rem; 
             font-weight: 600; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
             display: inline-block;
         }
         .status-requested, .status-pending { background: var(--warning-bg); color: #B45309; }
@@ -325,6 +361,9 @@
         .status-info { background: var(--info-bg); color: #1E40AF; }
         .status-completed { background: #F3F4F6; color: #374151; }
         .status-rejected, .status-failed, .status-inactive { background: var(--danger-bg); color: #991B1B; }
+        .status-emergency { background: #FEE2E2; color: #EF4444; border: 1px solid #EF4444; animation: blink 1s infinite; }
+
+        @keyframes blink { 50% { opacity: 0.6; } }
 
         /* --- Login Screen --- */
         #login-container {
@@ -417,14 +456,18 @@
             <div id="sidebar">
                 <div class="sidebar-header">QUICK SAUDA</div>
                 <nav class="sidebar-nav">
-                    <a class="nav-link active" data-tab="splash">🎨 Splash Manager</a>
+                    <a class="nav-link active" data-tab="categories">📂 Category Manager</a> 
+                    <a class="nav-link" data-tab="splash">🎨 Splash Manager</a>
                     <a class="nav-link" data-tab="banners">🖼️ Banner Manager</a>
                     <a class="nav-link" data-tab="coupons">🎫 Coupon Manager</a>
                     <a class="nav-link" data-tab="notifications">🔔 Notifications</a>
                     <a class="nav-link" data-tab="returns">↩️ Customer Returns</a>
                     <a class="nav-link" data-tab="settlements">💰 Seller Settlements</a>
                     <a class="nav-link" data-tab="delivery">🛵 Delivery Boys</a>
+                    <a class="nav-link" data-tab="drivers">🚖 Driver & Ride Control</a>
+                    <a class="nav-link" data-tab="sos" style="font-weight: bold;">🚨 SOS Monitor</a>
                     <a class="nav-link" data-tab="affiliate">🔗 Affiliate Products</a>
+                    <a class="nav-link" data-tab="settings">⚙️ App Settings</a>
                 </nav>
                 <button id="logout-btn" class="btn">Sign Out</button>
             </div>
@@ -438,7 +481,21 @@
                     </div>
                 </div>
 
-                <div id="splash-section" class="tab-content">
+                <div id="categories-section" class="tab-content">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2>All Categories</h2>
+                            <button onclick="openCategoryModal()" class="btn btn-primary">
+                                + Add New Category
+                            </button>
+                        </div>
+
+                        <div id="categories-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="splash-section" class="tab-content hidden">
                     <div class="card">
                         <h2>Current Splash Screens</h2>
                         <div id="splash-grid" class="splash-grid"></div>
@@ -485,6 +542,14 @@
                                         <option value="bottom">Bottom Section</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="banner-section">Section</label>
+                                <select id="banner-section" name="section">
+                                    <option value="home">Home Page</option>
+                                    <option value="product">Product Page</option>
+                                    <option value="service">Service Page</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="banner-active">Status</label>
@@ -650,6 +715,60 @@
                     </div>
                 </div>
 
+                <div id="drivers-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>Live Driver Monitoring</h2>
+                        <div style="margin-bottom: 15px;">
+                            <button class="btn btn-primary" onclick="fetchDriversStatus()">Refresh List</button>
+                        </div>
+                        <div id="drivers-list" style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Vehicle</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Wallet Balance</th>
+                                        <th>Locked?</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="drivers-table-body">
+                                    <tr><td colspan="7" style="text-align:center;">Loading drivers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sos-section" class="tab-content hidden">
+                    <div class="card" style="border-top: 5px solid var(--danger-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="color: var(--danger-color);">🚨 SOS Alerts (Live)</h2>
+                            <button class="btn btn-danger" onclick="fetchSOSAlerts()">Refresh Alerts</button>
+                        </div>
+                        <div id="sos-list" style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>User Name</th>
+                                        <th>Phone</th>
+                                        <th>Location</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sos-table-body">
+                                    <tr><td colspan="7" style="text-align:center;">Checking for emergency alerts...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="affiliate-section" class="tab-content hidden">
                     <div class="card">
                         <h2 id="aff-form-title">Add Affiliate Product</h2>
@@ -722,7 +841,51 @@
                             </div>
                     </div>
                 </div>
+
+                <div id="settings-section" class="tab-content hidden">
+                    <div class="card">
+                        <h2>General Settings</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Platform Commission Rate (%)</label>
+                                <input type="number" id="setting-commission" step="0.01" min="0" max="1" placeholder="e.g. 0.05 for 5%">
+                                <small style="color:#666;">Enter as decimal (0.05 = 5%, 0.10 = 10%)</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Product Creation Fee (₹)</label>
+                                <input type="number" id="setting-product-fee" step="1" min="0" placeholder="e.g. 10">
+                                <small style="color:#666;">Fee for seller wallet after free limit</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>App Design Theme (Dynamic Colors)</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Primary Color (Brand)</label>
+                                <input type="color" id="theme-primary" value="#10B981">
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary Color (Highlights)</label>
+                                <input type="color" id="theme-secondary" value="#F59E0B">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Background Color (App BG)</label>
+                                <input type="color" id="theme-background" value="#F3F4F6">
+                            </div>
+                            <div class="form-group">
+                                <label>Search Bar Color</label>
+                                <input type="color" id="theme-search" value="#FFFFFF">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveAppSettings()">Save Settings & Apply</button>
+                    </div>
                 </div>
+
+            </div>
         </div>
     </div>
 
@@ -730,7 +893,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Approve Customer Return</h3>
-                <button class="close-modal">&times;</button>
+                <button class="close-modal">×</button>
             </div>
             <div id="modal-error" class="error-message hidden"></div>
             <div id="approval-text" style="line-height: 1.6; color: #4B5563;">
@@ -743,6 +906,124 @@
             <div style="text-align: right; margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
                 <button class="btn btn-warning" onclick="closeApproveReturnModal()">Cancel</button>
                 <button id="confirm-approval" class="btn btn-primary">Confirm & Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="cat-modal-title">Add Category</h3>
+                <button class="close-modal" onclick="closeCategoryModal()">×</button>
+            </div>
+            <form id="category-form">
+                <input type="hidden" id="cat-id">
+                <div id="cat-error" class="error-message hidden"></div>
+
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" name="name" id="cat-name" placeholder="e.g. Electrician or Vegetables" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="type" id="cat-type" style="background-color: #f8fafc; border-color: #cbd5e1;">
+                            <option value="product">📦 Product (Items)</option>
+                            <option value="service">🛠️ Service (Booking)</option>
+                        </select>
+                        <small style="color: #666; display: block; margin-top: 5px;">Select 'Service' for things like Doctor, Plumber, etc.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Sort Order</label>
+                        <input type="number" name="sortOrder" id="cat-sort" value="0">
+                    </div>
+                </div>
+
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #15803d; font-size: 0.95rem;">🎨 Design & Style (Flipkart Style)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Shape</label>
+                            <select name="shape" id="cat-shape">
+                                <option value="circle">Circle</option>
+                                <option value="square">Square</option>
+                                <option value="rectangle">Rectangle</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <input type="color" name="bgColor" id="cat-bgColor" value="#ffffff" style="height: 40px; padding: 2px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <input type="color" name="textColor" id="cat-textColor" value="#000000" style="height: 40px; padding: 2px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Border Color</label>
+                            <input type="color" name="borderColor" id="cat-borderColor" value="#ffffff" style="height: 40px; padding: 2px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="isActive" id="cat-active">
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Category Image/Icon</label>
+                    <input type="file" name="image" id="cat-image" accept="image/*">
+                    <small id="cat-img-hint" style="display:none; color:#666;">Leave empty to keep current image.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Save Category</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="subcategory-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Manage Subcategories: <span id="subcat-parent-name" style="color: var(--primary-color);"></span></h3>
+                <button class="close-modal" onclick="closeSubCategoryModal()">×</button>
+            </div>
+            
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e5e7eb;">
+                <h4 style="margin-bottom: 10px; font-size: 0.95rem;">Add New Subcategory</h4>
+                <form id="subcategory-add-form" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                    <input type="hidden" id="subcat-parent-id">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 0.8rem;">Name</label>
+                        <input type="text" id="subcat-new-name" placeholder="e.g. Mens T-Shirts" required style="padding: 8px;">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                         <label style="font-size: 0.8rem;">Image</label>
+                         <input type="file" id="subcat-new-image" accept="image/*" style="padding: 5px; background: white;" required>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="padding: 9px 15px;">Add</button>
+                </form>
+            </div>
+
+            <div id="subcat-list-container">
+                <table style="font-size: 0.9rem;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 8px;">Image</th>
+                            <th style="padding: 8px;">Name</th>
+                            <th style="padding: 8px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subcat-list-body">
+                        </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -790,14 +1071,23 @@
         const notificationForm = document.getElementById('notification-form');
         const notificationStatus = document.getElementById('notification-status');
         const returnsTableBody = document.getElementById('returns-table-body');
-        const settlementsTableBody = document.getElementById('settlements-table-body'); // New
+        const settlementsTableBody = document.getElementById('settlements-table-body'); 
         const deliveryTableBody = document.getElementById('delivery-table-body');
+        const driversTableBody = document.getElementById('drivers-table-body');
+        const sosTableBody = document.getElementById('sos-table-body'); // NEW
 
         // Modal elements
         const assignDeliveryModal = document.getElementById('assign-delivery-modal');
         const confirmApprovalBtn = document.getElementById('confirm-approval');
         const closeModalBtn = document.querySelector('.close-modal');
         const modalError = document.getElementById('modal-error');
+
+        // Subcategory Modal Elements
+        const subCategoryModal = document.getElementById('subcategory-modal');
+        const subCatParentNameDisplay = document.getElementById('subcat-parent-name');
+        const subCatParentIdInput = document.getElementById('subcat-parent-id');
+        const subCatAddForm = document.getElementById('subcategory-add-form');
+        const subCatListBody = document.getElementById('subcat-list-body');
 
         // State variables
         let currentOrderId = null;
@@ -859,16 +1149,362 @@
                     content.id === `${tab}-section` ? content.classList.remove('hidden') : content.classList.add('hidden');
                 });
 
+                if (tab === 'categories') fetchCategories(); 
                 if (tab === 'splash') fetchSplashScreens();
                 if (tab !== 'banners') resetBannerForm();
                 if (tab === 'banners') fetchBanners(); 
                 if (tab === 'coupons') fetchCoupons();
                 if (tab === 'returns') fetchReturnRequests();
-                if (tab === 'settlements') fetchSettlements(); // New
+                if (tab === 'settlements') fetchSettlements(); 
                 if (tab === 'delivery') fetchDeliveryBoys();
-                if (tab === 'affiliate') fetchAffiliateProducts(); // ✅ LOAD AFFILIATE
+                if (tab === 'drivers') fetchDriversStatus(); 
+                if (tab === 'sos') fetchSOSAlerts(); 
+                if (tab === 'affiliate') fetchAffiliateProducts();
+                if (tab === 'settings') fetchAppSettings(); // ✅ Load Settings
             });
         });
+
+        // ==========================================
+        // --- ✅ APP SETTINGS LOGIC (NEW) ---
+        // ==========================================
+        const fetchAppSettings = async () => {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                // Populate Commission & Fee
+                document.getElementById('setting-commission').value = data.platformCommissionRate;
+                document.getElementById('setting-product-fee').value = data.productCreationFee || 10;
+
+                // Populate Theme Colors (with defaults if missing)
+                if (data.theme) {
+                    document.getElementById('theme-primary').value = data.theme.primaryColor || '#10B981';
+                    document.getElementById('theme-secondary').value = data.theme.secondaryColor || '#F59E0B';
+                    document.getElementById('theme-background').value = data.theme.backgroundColor || '#F3F4F6';
+                    document.getElementById('theme-search').value = data.theme.searchBarColor || '#FFFFFF';
+                }
+            } catch (err) {
+                console.error("Error fetching settings", err);
+            }
+        };
+
+        window.saveAppSettings = async () => {
+            const token = localStorage.getItem('admin_token');
+            const commission = document.getElementById('setting-commission').value;
+            const productFee = document.getElementById('setting-product-fee').value;
+            
+            const theme = {
+                primaryColor: document.getElementById('theme-primary').value,
+                secondaryColor: document.getElementById('theme-secondary').value,
+                backgroundColor: document.getElementById('theme-background').value,
+                searchBarColor: document.getElementById('theme-search').value
+            };
+
+            const payload = {
+                platformCommissionRate: commission,
+                productCreationFee: productFee,
+                theme: theme
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if(!response.ok) throw new Error('Update failed');
+                alert("Settings Updated! Restart the app to see changes.");
+            } catch(err) {
+                alert(err.message);
+            }
+        };
+
+        // ==========================================
+        // --- ✅ CATEGORY MANAGER LOGIC ---
+        // ==========================================
+
+        const categoriesListEl = document.getElementById('categories-list');
+        const categoryModal = document.getElementById('category-modal');
+        const categoryForm = document.getElementById('category-form');
+        const catError = document.getElementById('cat-error');
+
+        // 1. Fetch Categories
+        const fetchCategories = async () => {
+            const token = localStorage.getItem('admin_token');
+            if (!token) return handleLogout();
+            
+            categoriesListEl.innerHTML = '<p>Loading categories...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/categories`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const categories = await response.json();
+                renderCategories(categories);
+            } catch (error) {
+                console.error(error);
+                categoriesListEl.innerHTML = '<p class="error-message">Failed to load categories.</p>';
+            }
+        };
+
+        // 2. Render Categories
+        const renderCategories = (categories) => {
+            categoriesListEl.innerHTML = '';
+            if (!categories || categories.length === 0) {
+                categoriesListEl.innerHTML = '<p>No categories found.</p>';
+                return;
+            }
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.style.cssText = "background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);";
+                
+                // Badge Color Logic
+                const typeBadge = cat.type === 'service' 
+                    ? `<span style="background: #F3E8FF; color: #7E22CE; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid #D8B4FE;">SERVICE</span>`
+                    : `<span style="background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid #93C5FD;">PRODUCT</span>`;
+
+                const statusDot = cat.isActive 
+                    ? `<span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>` 
+                    : `<span style="width: 8px; height: 8px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>`;
+
+                const catDataSafe = encodeURIComponent(JSON.stringify(cat));
+
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${cat.image?.url || 'https://placehold.co/50'}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #f3f4f6;">
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; font-size: 1rem;">${cat.name}</h4>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                ${typeBadge}
+                                <span style="font-size: 0.8rem; color: #666; display: flex; align-items: center; gap: 4px;">${statusDot} ${cat.isActive ? 'Active' : 'Inactive'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-top: 5px; justify-content: flex-end;">
+                        <button class="btn btn-subcat" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openSubCategoryModal('${cat._id}', '${cat.name}')">📂 Subcats</button>
+                        <button class="btn btn-info" style="padding: 6px 10px;" onclick="openCategoryModal('${catDataSafe}')">✏️</button>
+                        <button class="btn btn-danger" style="padding: 6px 10px;" onclick="deleteCategory('${cat._id}')">🗑️</button>
+                    </div>
+                `;
+                categoriesListEl.appendChild(card);
+            });
+        };
+
+        // 3. Open Modal (Add/Edit)
+        window.openCategoryModal = (catDataString = null) => {
+            catError.classList.add('hidden');
+            categoryForm.reset();
+            
+            if (catDataString) {
+                // Edit Mode
+                const cat = JSON.parse(decodeURIComponent(catDataString));
+                document.getElementById('cat-modal-title').textContent = 'Edit Category';
+                document.getElementById('cat-id').value = cat._id;
+                document.getElementById('cat-name').value = cat.name;
+                document.getElementById('cat-type').value = cat.type || 'product';
+                document.getElementById('cat-sort').value = cat.sortOrder || 0;
+                document.getElementById('cat-active').value = cat.isActive ? 'true' : 'false';
+                
+                // ✅ Load Design Values
+                document.getElementById('cat-shape').value = cat.shape || 'circle';
+                document.getElementById('cat-bgColor').value = cat.bgColor || '#ffffff';
+                document.getElementById('cat-textColor').value = cat.textColor || '#000000';
+                document.getElementById('cat-borderColor').value = cat.borderColor || '#ffffff';
+
+                document.getElementById('cat-image').required = false;
+                document.getElementById('cat-img-hint').style.display = 'block';
+            } else {
+                // Add Mode
+                document.getElementById('cat-modal-title').textContent = 'Add New Category';
+                document.getElementById('cat-id').value = '';
+                document.getElementById('cat-type').value = 'product'; // Default
+                document.getElementById('cat-active').value = 'true';
+                
+                // ✅ Set Defaults
+                document.getElementById('cat-shape').value = 'circle';
+                document.getElementById('cat-bgColor').value = '#ffffff';
+                document.getElementById('cat-textColor').value = '#000000';
+                document.getElementById('cat-borderColor').value = '#ffffff';
+
+                document.getElementById('cat-image').required = true;
+                document.getElementById('cat-img-hint').style.display = 'none';
+            }
+            categoryModal.style.display = 'flex';
+        };
+
+        window.closeCategoryModal = () => {
+            categoryModal.style.display = 'none';
+        };
+
+        // 4. Handle Submit
+        categoryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            catError.classList.add('hidden');
+            const token = localStorage.getItem('admin_token');
+            
+            const formData = new FormData(categoryForm);
+            const id = document.getElementById('cat-id').value;
+            const isEdit = !!id;
+
+            // Remove ID from formData so it doesn't get sent as a field
+            formData.delete('id'); 
+
+            try {
+                let url = `${API_BASE_URL}/api/admin/categories`;
+                let method = 'POST';
+
+                if (isEdit) {
+                    url = `${API_BASE_URL}/api/admin/categories/${id}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}` }, // No Content-Type for FormData
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Operation failed');
+
+                alert(isEdit ? 'Category Updated!' : 'Category Created!');
+                closeCategoryModal();
+                fetchCategories();
+
+            } catch (error) {
+                catError.textContent = error.message;
+                catError.classList.remove('hidden');
+            }
+        });
+
+        // 5. Delete Category
+        window.deleteCategory = async (id) => {
+            if(!confirm('Are you sure? Deleting a category might affect products attached to it.')) return;
+            
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Delete failed');
+                }
+                
+                fetchCategories();
+            } catch (error) {
+                alert(error.message);
+            }
+        };
+
+        // ==========================================
+        // --- ✅ SUBCATEGORY MANAGER LOGIC (NEW) ---
+        // ==========================================
+
+        window.openSubCategoryModal = (parentId, parentName) => {
+            subCatParentNameDisplay.textContent = parentName;
+            subCatParentIdInput.value = parentId;
+            subCatAddForm.reset();
+            subCatListBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
+            subCategoryModal.style.display = 'flex';
+            fetchSubCategories(parentId);
+        };
+
+        window.closeSubCategoryModal = () => {
+            subCategoryModal.style.display = 'none';
+        };
+
+        const fetchSubCategories = async (parentId) => {
+            const token = localStorage.getItem('admin_token');
+            try {
+                // Assuming endpoint: GET /api/admin/subcategories/:parentId
+                const response = await fetch(`${API_BASE_URL}/api/admin/subcategories/${parentId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if(!response.ok) throw new Error('Failed to load');
+                const subcats = await response.json();
+                renderSubCategories(subcats);
+            } catch (err) {
+                console.error(err);
+                subCatListBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error loading subcategories.</td></tr>';
+            }
+        };
+
+        const renderSubCategories = (subcats) => {
+            subCatListBody.innerHTML = '';
+            if(!subcats || subcats.length === 0) {
+                subCatListBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 15px; color: #666;">No subcategories yet.</td></tr>';
+                return;
+            }
+
+            subcats.forEach(sub => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 8px;"><img src="${sub.image?.url || 'https://placehold.co/40'}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;"></td>
+                    <td style="padding: 8px; font-weight: 500;">${sub.name}</td>
+                    <td style="padding: 8px; text-align: right;">
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteSubCategory('${sub._id}')">🗑️</button>
+                    </td>
+                `;
+                subCatListBody.appendChild(tr);
+            });
+        };
+
+        subCatAddForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('admin_token');
+            const parentId = subCatParentIdInput.value;
+            const name = document.getElementById('subcat-new-name').value;
+            const imageFile = document.getElementById('subcat-new-image').files[0];
+
+            if(!imageFile) { alert("Image is required"); return; }
+
+            const formData = new FormData();
+            formData.append('parentId', parentId);
+            formData.append('name', name);
+            formData.append('image', imageFile);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/subcategories`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await response.json();
+                if(!response.ok) throw new Error(data.message || 'Failed to add');
+                
+                subCatAddForm.reset();
+                fetchSubCategories(parentId);
+            } catch(err) {
+                alert(err.message);
+            }
+        });
+
+        window.deleteSubCategory = async (id) => {
+            if(!confirm("Delete this subcategory?")) return;
+            const token = localStorage.getItem('admin_token');
+            const parentId = subCatParentIdInput.value;
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/subcategories/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if(!response.ok) throw new Error('Failed to delete');
+                fetchSubCategories(parentId);
+            } catch(err) {
+                alert(err.message);
+            }
+        };
 
         // ==========================================
         // --- Splash Manager Functions ---
@@ -964,6 +1600,11 @@
             bannerTitleInput.value = banner.title || '';
             bannerPositionSelect.value = banner.position || 'top'; 
             bannerActiveSelect.value = banner.isActive ? 'true' : 'false';
+            // Set section if available
+            if(banner.section) {
+                document.getElementById('banner-section').value = banner.section;
+            }
+            
             bannerFormTitle.textContent = 'Edit Banner';
             bannerSubmitBtn.textContent = 'Update Banner';
             bannerCancelEditBtn.classList.remove('hidden');
@@ -998,6 +1639,7 @@
             const title = bannerTitleInput.value;
             const position = bannerPositionSelect.value;
             const isActive = bannerActiveSelect.value;
+            const section = document.getElementById('banner-section').value; // New Field
 
             if (!isEditMode && !mediaFile) {
                 bannerUploadError.textContent = "Please select an image file for a new banner.";
@@ -1009,6 +1651,7 @@
             formData.append('link', title || ''); 
             formData.append('position', position); 
             formData.append('isActive', isActive);
+            formData.append('section', section); // Append Section
             formData.append('type', 'image');
 
             try {
@@ -1067,7 +1710,8 @@
                         <strong style="display:block; margin-bottom:5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${banner.title || 'No Title'}</strong>
                         <div style="font-size:0.85em; color:#666;">
                             <span style="text-transform: capitalize; font-weight: 500;">${banner.position || 'Hero'}</span>
-                             | <span style="color: ${banner.isActive ? 'var(--success-color)':'#999'}">${banner.isActive ? 'Active' : 'Inactive'}</span>
+                            | <span style="text-transform: capitalize; font-weight: 500; color: #3b82f6;">${banner.section || 'Home'}</span>
+                            | <span style="color: ${banner.isActive ? 'var(--success-color)':'#999'}">${banner.isActive ? 'Active' : 'Inactive'}</span>
                         </div>
                     </div>
                     <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px;">
@@ -1286,7 +1930,7 @@
         };
 
         // ==========================================
-        // --- NEW: Seller Settlement Functions ---
+        // --- Seller Settlement Functions ---
         // ==========================================
         const fetchSettlements = async () => {
             const token = localStorage.getItem('admin_token');
@@ -1299,8 +1943,8 @@
                 });
                 
                 if (response.status === 404) {
-                     settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Endpoint /api/admin/payouts/pending not found.</td></tr>';
-                     return;
+                      settlementsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Endpoint /api/admin/payouts/pending not found.</td></tr>';
+                      return;
                 }
                 
                 const requests = await response.json();
@@ -1325,12 +1969,10 @@
                 // Parse and highlight UPI ID if present in notes
                 let notes = req.notes || 'No details provided';
                 
-                // Highlight VPA (UPI ID) in Purple/Bold
                 if (notes.includes("VPA:")) {
                     notes = notes.replace('MANUAL TRANSFER:', '').trim();
                     notes = notes.replace(/(VPA:)(.*)/, '$1 <strong style="color: var(--upi-color); font-size: 1.1em;">$2</strong>');
                 } else {
-                    // Style Bank Details
                     notes = notes.replace('MANUAL TRANSFER:', '').trim();
                 }
 
@@ -1433,7 +2075,160 @@
         };
 
         // ==========================================
-        // --- ✅ NEW: Affiliate Marketing Functions ---
+        // --- 🚖 DRIVER MONITORING LOGIC (NEW) ---
+        // ==========================================
+        const fetchDriversStatus = async () => {
+            const token = localStorage.getItem('admin_token');
+            driversTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading drivers status...</td></tr>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/drivers-status`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load drivers');
+                
+                const drivers = await response.json();
+                renderDrivers(drivers);
+            } catch (err) {
+                console.error(err);
+                driversTableBody.innerHTML = '<tr><td colspan="7" class="error-message" style="text-align:center;">Error fetching driver data.</td></tr>';
+            }
+        };
+
+        const renderDrivers = (drivers) => {
+            driversTableBody.innerHTML = '';
+            if (!drivers || drivers.length === 0) {
+                driversTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 30px;">No drivers found.</td></tr>';
+                return;
+            }
+
+            drivers.forEach(driver => {
+                const tr = document.createElement('tr');
+                const isOnline = driver.status.includes('Online');
+                const statusColor = isOnline ? 'color: var(--success-color);' : 'color: #999;';
+                const isLocked = driver.locked.includes('Locked');
+                
+                tr.innerHTML = `
+                    <td style="font-weight: 500;">${driver.name}</td>
+                    <td>${driver.vehicle || 'Unknown'}</td>
+                    <td>${driver.phone}</td>
+                    <td style="${statusColor} font-weight: bold;">${driver.status}</td>
+                    <td style="font-family: monospace;">${driver.balance}</td>
+                    <td>
+                        <span class="status-badge ${isLocked ? 'status-rejected' : 'status-active'}">
+                            ${driver.locked}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn ${isLocked ? 'btn-success' : 'btn-danger'}" 
+                                style="padding: 6px 12px; font-size: 0.8rem;" 
+                                onclick="toggleDriverBlock('${driver.id}', ${isLocked})">
+                            ${isLocked ? 'Unlock' : 'Block'}
+                        </button>
+                    </td>
+                `;
+                driversTableBody.appendChild(tr);
+            });
+        };
+
+        const toggleDriverBlock = async (driverId, currentlyLocked) => {
+            const action = currentlyLocked ? 'unblock' : 'block';
+            if(!confirm(`Are you sure you want to ${action.toUpperCase()} this driver?`)) return;
+
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/drivers/${driverId}/block`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ action: action })
+                });
+
+                if(!response.ok) throw new Error('Action failed');
+                
+                alert(`Driver ${action}ed successfully.`);
+                fetchDriversStatus(); // Refresh table
+            } catch(err) {
+                alert(err.message);
+            }
+        };
+
+        // ==========================================
+        // --- 🚨 SOS ALERT LOGIC (NEW) ---
+        // ==========================================
+        const fetchSOSAlerts = async () => {
+            const token = localStorage.getItem('admin_token');
+            sosTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Scanning for alerts...</td></tr>';
+
+            // NOTE: In a real system, you would fetch from /api/admin/sos.
+            // Since we are using Complaints for now, we filter those.
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/complaints`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to load alerts');
+                
+                const allComplaints = await response.json();
+                // Filter for "SOS" or high priority items
+                const sosAlerts = allComplaints.filter(c => 
+                    c.reason && (c.reason.toLowerCase().includes('sos') || c.reason.toLowerCase().includes('emergency'))
+                );
+                
+                renderSOSAlerts(sosAlerts);
+            } catch (err) {
+                console.error(err);
+                sosTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: red;">Error loading SOS alerts.</td></tr>';
+            }
+        };
+
+        const renderSOSAlerts = (alerts) => {
+            sosTableBody.innerHTML = '';
+            if (!alerts || alerts.length === 0) {
+                sosTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 30px; color: #22c55e;">✅ No active SOS alerts. Safe!</td></tr>';
+                return;
+            }
+
+            alerts.forEach(alert => {
+                const tr = document.createElement('tr');
+                tr.classList.add('sos-row'); // Apply red background style
+                
+                const mapLink = alert.ride ? `https://www.google.com/maps/search/?api=1&query=${alert.ride.dropLocation?.coordinates[1]},${alert.ride.dropLocation?.coordinates[0]}` : '#';
+
+                tr.innerHTML = `
+                    <td><span class="status-badge status-emergency">🚨 SOS</span></td>
+                    <td style="font-weight:bold;">${alert.user?.name || 'Unknown'}</td>
+                    <td>${alert.user?.phone || 'N/A'}</td>
+                    <td><a href="${mapLink}" target="_blank" style="color:#DC2626; font-weight:bold; text-decoration:underline;">View on Map 📍</a></td>
+                    <td>${new Date(alert.createdAt).toLocaleTimeString()}</td>
+                    <td>${alert.status}</td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="resolveSOS('${alert._id}')">Resolve</button>
+                    </td>
+                `;
+                sosTableBody.appendChild(tr);
+            });
+        };
+
+        const resolveSOS = async (id) => {
+            if(!confirm("Mark this SOS alert as Resolved?")) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/complaints/${id}/resolve`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ status: 'Resolved', adminNote: 'Handled via SOS Panel' })
+                });
+                if(!response.ok) throw new Error('Failed');
+                fetchSOSAlerts();
+            } catch(e) { alert(e.message); }
+        };
+
+        // ==========================================
+        // --- Affiliate Marketing Functions ---
         // ==========================================
 
         // Elements
@@ -1452,7 +2247,6 @@
             affiliateListContainer.innerHTML = '<p>Loading...</p>';
 
             try {
-                // Note: We use the public route to get list, as defined in your server
                 const response = await fetch(`${API_BASE_URL}/api/affiliate-products`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -1478,7 +2272,6 @@
                 const statusColor = prod.isActive ? 'var(--success-color)' : '#ccc';
                 card.style.borderBottom = `4px solid ${statusColor}`;
                 
-                // Securely encode data for edit button
                 const prodDataSafe = encodeURIComponent(JSON.stringify(prod));
 
                 card.innerHTML = `
@@ -1501,14 +2294,13 @@
             });
         };
 
-        // 3. Handle Form Submit (Add/Update)
+        // 3. Handle Form Submit
         affiliateForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             affError.classList.add('hidden');
             const token = localStorage.getItem('admin_token');
             const formData = new FormData(affiliateForm);
             
-            // Fix boolean conversion for isActive
             const isActiveVal = document.getElementById('aff-active').value;
             formData.set('isActive', isActiveVal); 
 
@@ -1562,7 +2354,6 @@
             affSubmitBtn.textContent = 'Update Product';
             affCancelBtn.classList.remove('hidden');
 
-            // Scroll to form
             affiliateForm.scrollIntoView({ behavior: 'smooth' });
         };
 
@@ -1600,9 +2391,8 @@
 
         affCancelBtn.addEventListener('click', resetAffiliateForm);
 
-
         // ==========================================
-        // --- Modal Functions ---
+        // --- Modal Functions (Returns) ---
         // ==========================================
         const openApproveReturnModal = (orderId) => {
             currentOrderId = orderId;
