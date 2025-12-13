@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick Sauda Admin Panel</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         /* --- CSS Variables & Modern Reset --- */
         :root {
@@ -282,7 +288,7 @@
         table { 
             width: 100%; 
             border-collapse: separate; 
-            border-spacing: 0 8px; /* Space between rows */
+            border-spacing: 0 8px; /* Space between rows */ 
             margin-top: 10px; 
         }
         
@@ -467,6 +473,7 @@
                     <a class="nav-link" data-tab="drivers">🚖 Driver & Ride Control</a>
                     <a class="nav-link" data-tab="sos" style="font-weight: bold;">🚨 SOS Monitor</a>
                     <a class="nav-link" data-tab="affiliate">🔗 Affiliate Products</a>
+                    <a class="nav-link" data-tab="locations" style="color: #EF4444; font-weight: 500;">🚫 Blocked Areas</a>
                     <a class="nav-link" data-tab="settings">⚙️ App Settings</a>
                 </nav>
                 <button id="logout-btn" class="btn">Sign Out</button>
@@ -842,6 +849,54 @@
                     </div>
                 </div>
 
+                <div id="locations-section" class="tab-content hidden">
+                    <div class="card">
+                        <div style="border-bottom: 2px solid #F3F4F6; padding-bottom: 15px; margin-bottom: 20px;">
+                            <h2 style="color: #374151; border: none; margin: 0;">🔢 Blocked Pincodes</h2>
+                            <small style="color: #666;">Enter pincodes to completely stop delivery in those areas.</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Blocked Pincodes (Comma separated)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="setting-blocked-pincodes" placeholder="e.g. 800001, 800002" style="border-color: #FECACA; background-color: #FEF2F2;">
+                                <button class="btn btn-primary" onclick="saveAppSettings()">Update & Save</button>
+                            </div>
+                            <div style="margin-top: 10px; padding: 10px; background: #ECFDF5; border-radius: 6px; border: 1px solid #A7F3D0; color: #065F46; font-size: 0.9em;">
+                                <strong>💡 To Unblock:</strong> Simply delete the pincode from the box above and click "Update & Save".
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F3F4F6; padding-bottom: 15px; margin-bottom: 20px;">
+                            <div>
+                                <h2 style="color: #374151; border: none; margin: 0;">🌍 Blocked Geo-Zones (Map)</h2>
+                                <small style="color: #666;">Block specific areas using a radius (e.g. for floods, riots, or non-serviceable streets).</small>
+                            </div>
+                            <button class="btn btn-danger" onclick="openZoneMapModal()">
+                                📍 Manage Zones on Map
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Current Active Blocked Zones (JSON Data)</label>
+                            <textarea id="setting-blocked-zones" rows="4" 
+                                placeholder='[]' 
+                                style="font-family:monospace; font-size:0.85rem; border-color: #E5E7EB; background: #F9FAFB; color: #6B7280;" readonly></textarea>
+                            <small style="color:#666;">This data is updated automatically via the Map Modal.</small>
+                        </div>
+                        
+                        <div style="text-align: right;">
+                            <button class="btn btn-primary" onclick="saveAppSettings()">Save Zone Changes</button>
+                        </div>
+                        
+                        <div style="margin-top: 10px; padding: 10px; background: #ECFDF5; border-radius: 6px; border: 1px solid #A7F3D0; color: #065F46; font-size: 0.9em;">
+                            <strong>💡 To Unblock Zones:</strong> Click "Manage Zones on Map", then click the red 'X' next to the zone you want to remove.
+                        </div>
+                    </div>
+                </div>
+
                 <div id="settings-section" class="tab-content hidden">
                     <div class="card">
                         <h2>General Settings</h2>
@@ -855,6 +910,17 @@
                                 <label>Product Creation Fee (₹)</label>
                                 <input type="number" id="setting-product-fee" step="1" min="0" placeholder="e.g. 10">
                                 <small style="color:#666;">Fee for seller wallet after free limit</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Delivery Configuration</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Global Delivery Radius (KM)</label>
+                                <input type="number" id="setting-radius" step="0.1" min="0" placeholder="e.g. 50">
+                                <small style="color:#666;">Max distance allowed for orders. Set 0 to disable radius check.</small>
                             </div>
                         </div>
                     </div>
@@ -906,6 +972,25 @@
             <div style="text-align: right; margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
                 <button class="btn btn-warning" onclick="closeApproveReturnModal()">Cancel</button>
                 <button id="confirm-approval" class="btn btn-primary">Confirm & Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="driver-map-modal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header">
+                <h3>Driver Location Verification</h3>
+                <button class="close-modal" onclick="closeBlockDriverModal()">×</button>
+            </div>
+            <p style="margin-bottom: 20px;">Please check the driver's location on the map before blocking/unblocking.</p>
+            
+            <a id="driver-map-link" href="#" target="_blank" class="btn btn-info" style="display: inline-block; margin-bottom: 20px; padding: 12px 20px;">
+                📍 View Location on Google Maps
+            </a>
+
+            <div style="border-top: 1px solid #eee; padding-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                <button class="btn btn-warning" onclick="closeBlockDriverModal()">Cancel</button>
+                <button id="confirm-block-driver-btn" class="btn btn-danger">Confirm Action</button>
             </div>
         </div>
     </div>
@@ -1028,6 +1113,67 @@
         </div>
     </div>
 
+    <div id="zone-map-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px; width: 95%;">
+            <div class="modal-header">
+                <h3>Manage Blocked Zones</h3>
+                <button class="close-modal" onclick="closeZoneMapModal()">×</button>
+            </div>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 10px;">1. Find Location</h4>
+                        
+                        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                            <input type="text" id="zone-search-input" placeholder="Search Place (e.g. Gandhi Maidan)" style="flex: 1;">
+                            <button class="btn btn-info" onclick="searchLocation()" style="padding: 8px;">🔍</button>
+                        </div>
+                        <button class="btn btn-warning" onclick="useLiveLocation()" style="width: 100%; margin-bottom: 15px; background: #fff; border: 1px solid #F59E0B; color: #F59E0B;">
+                            📍 Use My Current Location
+                        </button>
+    
+                        <h4 style="margin-bottom: 10px; border-top: 1px solid #e5e7eb; padding-top: 10px;">2. Define Zone</h4>
+                        <div class="form-group">
+                            <label>Reason</label>
+                            <input type="text" id="zone-reason" placeholder="e.g. Heavy Rain / Riots">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Lat</label>
+                                <input type="text" id="zone-lat" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Lng</label>
+                                <input type="text" id="zone-lng" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Radius (KM): <span id="radius-val">1.0</span> km</label>
+                            <input type="range" id="zone-radius" min="0.5" max="10" step="0.1" value="1" oninput="updateCirclePreview()">
+                        </div>
+                        <button class="btn btn-primary" onclick="addZoneToList()" style="width: 100%;">+ Add Blocked Zone</button>
+                    </div>
+    
+                    <div>
+                        <h4>Active Zones List</h4>
+                        <ul id="zones-list-ul" style="list-style: none; padding: 0; max-height: 150px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;">
+                            </ul>
+                    </div>
+                </div>
+    
+                <div style="flex: 2; min-width: 300px;">
+                    <div id="zone-map" style="height: 550px; width: 100%; border-radius: 8px; border: 2px solid #ddd;"></div>
+                </div>
+            </div>
+    
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                <button class="btn btn-warning" onclick="closeZoneMapModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveZonesToSettings()">Save Zones</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ================================================================
         // IMPORTANT: Replace with your actual live server URL
@@ -1074,10 +1220,11 @@
         const settlementsTableBody = document.getElementById('settlements-table-body'); 
         const deliveryTableBody = document.getElementById('delivery-table-body');
         const driversTableBody = document.getElementById('drivers-table-body');
-        const sosTableBody = document.getElementById('sos-table-body'); // NEW
+        const sosTableBody = document.getElementById('sos-table-body'); 
 
         // Modal elements
         const assignDeliveryModal = document.getElementById('assign-delivery-modal');
+        const driverMapModal = document.getElementById('driver-map-modal'); 
         const confirmApprovalBtn = document.getElementById('confirm-approval');
         const closeModalBtn = document.querySelector('.close-modal');
         const modalError = document.getElementById('modal-error');
@@ -1091,6 +1238,8 @@
 
         // State variables
         let currentOrderId = null;
+        let targetDriverId = null; 
+        let targetDriverAction = null; 
 
         // ==========================================
         // --- Core Authentication and Layout ---
@@ -1160,12 +1309,14 @@
                 if (tab === 'drivers') fetchDriversStatus(); 
                 if (tab === 'sos') fetchSOSAlerts(); 
                 if (tab === 'affiliate') fetchAffiliateProducts();
-                if (tab === 'settings') fetchAppSettings(); // ✅ Load Settings
+                
+                // Fetch Settings OR Locations (both use the same API endpoint)
+                if (tab === 'settings' || tab === 'locations') fetchAppSettings(); 
             });
         });
 
         // ==========================================
-        // --- ✅ APP SETTINGS LOGIC (NEW) ---
+        // --- ✅ APP SETTINGS LOGIC ---
         // ==========================================
         const fetchAppSettings = async () => {
             const token = localStorage.getItem('admin_token');
@@ -1176,15 +1327,46 @@
                 const data = await response.json();
                 
                 // Populate Commission & Fee
-                document.getElementById('setting-commission').value = data.platformCommissionRate;
-                document.getElementById('setting-product-fee').value = data.productCreationFee || 10;
+                if(document.getElementById('setting-commission'))
+                    document.getElementById('setting-commission').value = data.platformCommissionRate;
+                if(document.getElementById('setting-product-fee'))
+                    document.getElementById('setting-product-fee').value = data.productCreationFee || 10;
+
+                // ✅ Populate Delivery Config (Radius, Pincodes, Zones)
+                // Note: These IDs exist in the new "locations-section" as well
+                if (data.deliveryConfig) {
+                    if(document.getElementById('setting-radius'))
+                        document.getElementById('setting-radius').value = data.deliveryConfig.globalRadiusKm || 0;
+                    
+                    // Populate Blocked Pincodes (Array -> Comma String)
+                    if(document.getElementById('setting-blocked-pincodes')) {
+                        if(data.deliveryConfig.blockedPincodes && data.deliveryConfig.blockedPincodes.length > 0) {
+                            document.getElementById('setting-blocked-pincodes').value = data.deliveryConfig.blockedPincodes.join(', ');
+                        } else {
+                            document.getElementById('setting-blocked-pincodes').value = '';
+                        }
+                    }
+
+                    // Populate Blocked Zones (JSON Array -> String)
+                    if(document.getElementById('setting-blocked-zones')) {
+                        if(data.deliveryConfig.blockedZones && data.deliveryConfig.blockedZones.length > 0) {
+                            document.getElementById('setting-blocked-zones').value = JSON.stringify(data.deliveryConfig.blockedZones, null, 2);
+                        } else {
+                            document.getElementById('setting-blocked-zones').value = '';
+                        }
+                    }
+                }
 
                 // Populate Theme Colors (with defaults if missing)
                 if (data.theme) {
-                    document.getElementById('theme-primary').value = data.theme.primaryColor || '#10B981';
-                    document.getElementById('theme-secondary').value = data.theme.secondaryColor || '#F59E0B';
-                    document.getElementById('theme-background').value = data.theme.backgroundColor || '#F3F4F6';
-                    document.getElementById('theme-search').value = data.theme.searchBarColor || '#FFFFFF';
+                    if(document.getElementById('theme-primary'))
+                        document.getElementById('theme-primary').value = data.theme.primaryColor || '#10B981';
+                    if(document.getElementById('theme-secondary'))
+                        document.getElementById('theme-secondary').value = data.theme.secondaryColor || '#F59E0B';
+                    if(document.getElementById('theme-background'))
+                        document.getElementById('theme-background').value = data.theme.backgroundColor || '#F3F4F6';
+                    if(document.getElementById('theme-search'))
+                        document.getElementById('theme-search').value = data.theme.searchBarColor || '#FFFFFF';
                 }
             } catch (err) {
                 console.error("Error fetching settings", err);
@@ -1193,21 +1375,32 @@
 
         window.saveAppSettings = async () => {
             const token = localStorage.getItem('admin_token');
-            const commission = document.getElementById('setting-commission').value;
-            const productFee = document.getElementById('setting-product-fee').value;
             
-            const theme = {
-                primaryColor: document.getElementById('theme-primary').value,
-                secondaryColor: document.getElementById('theme-secondary').value,
-                backgroundColor: document.getElementById('theme-background').value,
-                searchBarColor: document.getElementById('theme-search').value
-            };
+            // Collect values safely (check if element exists)
+            const commissionEl = document.getElementById('setting-commission');
+            const productFeeEl = document.getElementById('setting-product-fee');
+            const radiusEl = document.getElementById('setting-radius'); 
+            const blockedPinsEl = document.getElementById('setting-blocked-pincodes'); 
+            const blockedZonesEl = document.getElementById('setting-blocked-zones'); 
+            
+            const themePrimary = document.getElementById('theme-primary');
+            
+            const payload = {};
 
-            const payload = {
-                platformCommissionRate: commission,
-                productCreationFee: productFee,
-                theme: theme
-            };
+            if(commissionEl) payload.platformCommissionRate = commissionEl.value;
+            if(productFeeEl) payload.productCreationFee = productFeeEl.value;
+            if(radiusEl) payload.deliveryRadius = radiusEl.value;
+            if(blockedPinsEl) payload.blockedPincodes = blockedPinsEl.value;
+            if(blockedZonesEl) payload.blockedZones = blockedZonesEl.value;
+
+            if(themePrimary) {
+                payload.theme = {
+                    primaryColor: document.getElementById('theme-primary').value,
+                    secondaryColor: document.getElementById('theme-secondary').value,
+                    backgroundColor: document.getElementById('theme-background').value,
+                    searchBarColor: document.getElementById('theme-search').value
+                };
+            }
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
@@ -1220,28 +1413,224 @@
                 });
 
                 if(!response.ok) throw new Error('Update failed');
-                alert("Settings Updated! Restart the app to see changes.");
+                alert("Settings/Locations Updated Successfully!");
+                fetchAppSettings(); // Refresh data
             } catch(err) {
                 alert(err.message);
             }
         };
 
         // ==========================================
-        // --- ✅ CATEGORY MANAGER LOGIC ---
+        // --- 🌍 GEO-FENCING MAP LOGIC (UPDATED) ---
         // ==========================================
 
+        let mapInstance = null;
+        let currentPreviewCircle = null;
+        let tempZones = []; 
+
+        // Open Modal
+        window.openZoneMapModal = () => {
+            document.getElementById('zone-map-modal').style.display = 'flex';
+            
+            // Load existing zones
+            const existingJson = document.getElementById('setting-blocked-zones').value;
+            try {
+                tempZones = existingJson ? JSON.parse(existingJson) : [];
+            } catch (e) {
+                tempZones = [];
+            }
+            renderZonesList();
+
+            // Initialize Map
+            setTimeout(() => {
+                if (mapInstance) mapInstance.remove();
+                
+                // Default View: Patna
+                mapInstance = L.map('zone-map').setView([25.5941, 85.1376], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(mapInstance);
+
+                // Click to set point
+                mapInstance.on('click', function(e) {
+                    setMapPoint(e.latlng.lat, e.latlng.lng);
+                });
+
+                // Draw existing zones
+                tempZones.forEach(zone => {
+                    L.circle([zone.lat, zone.lng], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.3,
+                        radius: zone.radiusKm * 1000
+                    }).addTo(mapInstance).bindPopup(`<b>${zone.reason}</b>`);
+                });
+
+            }, 200);
+        };
+
+        window.closeZoneMapModal = () => {
+            document.getElementById('zone-map-modal').style.display = 'none';
+        };
+
+        // Helper: Set inputs and update map view
+        function setMapPoint(lat, lng) {
+            document.getElementById('zone-lat').value = lat.toFixed(6);
+            document.getElementById('zone-lng').value = lng.toFixed(6);
+            
+            // Pan map to location
+            mapInstance.setView([lat, lng], 14);
+            updateCirclePreview();
+        }
+
+        // 🔍 Search Location using OpenStreetMap API (Nominatim)
+        window.searchLocation = async () => {
+            const query = document.getElementById('zone-search-input').value;
+            if (!query) return alert("Please enter a place name.");
+
+            const btn = document.querySelector('.btn-info'); // Search button
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⌛';
+
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    setMapPoint(lat, lng);
+                } else {
+                    alert("Location not found. Try a different name.");
+                }
+            } catch (error) {
+                alert("Search failed. Check internet connection.");
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        };
+
+        // 📍 Get Live Location from Browser
+        window.useLiveLocation = () => {
+            if (!navigator.geolocation) {
+                return alert("Geolocation is not supported by your browser.");
+            }
+            
+            // Show loading state on button
+            const btn = document.querySelector('button[onclick="useLiveLocation()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Getting Location...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    setMapPoint(lat, lng);
+                    btn.innerHTML = originalText;
+                },
+                (error) => {
+                    alert("Unable to retrieve your location. Ensure location permission is allowed.");
+                    btn.innerHTML = originalText;
+                }
+            );
+        };
+
+        window.updateCirclePreview = () => {
+            const lat = parseFloat(document.getElementById('zone-lat').value);
+            const lng = parseFloat(document.getElementById('zone-lng').value);
+            const radiusKm = parseFloat(document.getElementById('zone-radius').value);
+
+            document.getElementById('radius-val').textContent = radiusKm;
+
+            if (!lat || !lng) return;
+
+            if (currentPreviewCircle) {
+                mapInstance.removeLayer(currentPreviewCircle);
+            }
+
+            currentPreviewCircle = L.circle([lat, lng], {
+                color: 'blue',
+                fillColor: '#30f',
+                fillOpacity: 0.2,
+                radius: radiusKm * 1000
+            }).addTo(mapInstance);
+        };
+
+        window.addZoneToList = () => {
+            const lat = document.getElementById('zone-lat').value;
+            const lng = document.getElementById('zone-lng').value;
+            const radius = document.getElementById('zone-radius').value;
+            const reason = document.getElementById('zone-reason').value;
+
+            if (!lat || !lng || !reason) {
+                alert("Please set a location (Search/Click/Live) and enter a reason.");
+                return;
+            }
+
+            tempZones.push({
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+                radiusKm: parseFloat(radius),
+                reason: reason
+            });
+
+            // Reset inputs
+            document.getElementById('zone-reason').value = '';
+            
+            // Show red circle for the added zone
+            L.circle([lat, lng], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: radius * 1000
+            }).addTo(mapInstance);
+
+            renderZonesList();
+        };
+
+        window.removeZone = (index) => {
+            tempZones.splice(index, 1);
+            renderZonesList();
+        };
+
+        function renderZonesList() {
+            const ul = document.getElementById('zones-list-ul');
+            ul.innerHTML = '';
+            
+            tempZones.forEach((zone, index) => {
+                const li = document.createElement('li');
+                li.style.padding = '8px';
+                li.style.borderBottom = '1px solid #eee';
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.innerHTML = `
+                    <span style="font-size:0.9em;"><b>${zone.reason}</b> (${zone.radiusKm}km)</span>
+                    <button onclick="removeZone(${index})" style="color:red; background:none; border:none; cursor:pointer;">✕</button>
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        window.saveZonesToSettings = () => {
+            const jsonString = JSON.stringify(tempZones, null, 2);
+            document.getElementById('setting-blocked-zones').value = jsonString;
+            closeZoneMapModal();
+        };
+
+        // ==========================================
+        // --- ✅ CATEGORY MANAGER LOGIC ---
+        // ==========================================
         const categoriesListEl = document.getElementById('categories-list');
         const categoryModal = document.getElementById('category-modal');
         const categoryForm = document.getElementById('category-form');
         const catError = document.getElementById('cat-error');
 
-        // 1. Fetch Categories
         const fetchCategories = async () => {
             const token = localStorage.getItem('admin_token');
             if (!token) return handleLogout();
             
             categoriesListEl.innerHTML = '<p>Loading categories...</p>';
-
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/categories`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -1254,7 +1643,6 @@
             }
         };
 
-        // 2. Render Categories
         const renderCategories = (categories) => {
             categoriesListEl.innerHTML = '';
             if (!categories || categories.length === 0) {
@@ -1264,9 +1652,8 @@
 
             categories.forEach(cat => {
                 const card = document.createElement('div');
-                card.style.cssText = "background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);";
+                card.style.cssText = `background: ${cat.bgColor || 'white'}; border: 2px solid ${cat.borderColor || '#e5e7eb'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);`;
                 
-                // Badge Color Logic
                 const typeBadge = cat.type === 'service' 
                     ? `<span style="background: #F3E8FF; color: #7E22CE; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid #D8B4FE;">SERVICE</span>`
                     : `<span style="background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid #93C5FD;">PRODUCT</span>`;
@@ -1277,11 +1664,15 @@
 
                 const catDataSafe = encodeURIComponent(JSON.stringify(cat));
 
+                let imgRadius = '8px';
+                if(cat.shape === 'circle') imgRadius = '50%';
+                if(cat.shape === 'square') imgRadius = '0';
+
                 card.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <img src="${cat.image?.url || 'https://placehold.co/50'}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #f3f4f6;">
+                        <img src="${cat.image?.url || 'https://placehold.co/50'}" style="width: 50px; height: 50px; border-radius: ${imgRadius}; object-fit: cover; background: #f3f4f6;">
                         <div>
-                            <h4 style="margin: 0 0 4px 0; font-size: 1rem;">${cat.name}</h4>
+                            <h4 style="margin: 0 0 4px 0; font-size: 1rem; color: ${cat.textColor || '#000'}">${cat.name}</h4>
                             <div style="display: flex; gap: 8px; align-items: center;">
                                 ${typeBadge}
                                 <span style="font-size: 0.8rem; color: #666; display: flex; align-items: center; gap: 4px;">${statusDot} ${cat.isActive ? 'Active' : 'Inactive'}</span>
@@ -1298,13 +1689,11 @@
             });
         };
 
-        // 3. Open Modal (Add/Edit)
         window.openCategoryModal = (catDataString = null) => {
             catError.classList.add('hidden');
             categoryForm.reset();
             
             if (catDataString) {
-                // Edit Mode
                 const cat = JSON.parse(decodeURIComponent(catDataString));
                 document.getElementById('cat-modal-title').textContent = 'Edit Category';
                 document.getElementById('cat-id').value = cat._id;
@@ -1313,7 +1702,6 @@
                 document.getElementById('cat-sort').value = cat.sortOrder || 0;
                 document.getElementById('cat-active').value = cat.isActive ? 'true' : 'false';
                 
-                // ✅ Load Design Values
                 document.getElementById('cat-shape').value = cat.shape || 'circle';
                 document.getElementById('cat-bgColor').value = cat.bgColor || '#ffffff';
                 document.getElementById('cat-textColor').value = cat.textColor || '#000000';
@@ -1322,13 +1710,11 @@
                 document.getElementById('cat-image').required = false;
                 document.getElementById('cat-img-hint').style.display = 'block';
             } else {
-                // Add Mode
                 document.getElementById('cat-modal-title').textContent = 'Add New Category';
                 document.getElementById('cat-id').value = '';
-                document.getElementById('cat-type').value = 'product'; // Default
+                document.getElementById('cat-type').value = 'product'; 
                 document.getElementById('cat-active').value = 'true';
                 
-                // ✅ Set Defaults
                 document.getElementById('cat-shape').value = 'circle';
                 document.getElementById('cat-bgColor').value = '#ffffff';
                 document.getElementById('cat-textColor').value = '#000000';
@@ -1344,7 +1730,6 @@
             categoryModal.style.display = 'none';
         };
 
-        // 4. Handle Submit
         categoryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             catError.classList.add('hidden');
@@ -1354,7 +1739,6 @@
             const id = document.getElementById('cat-id').value;
             const isEdit = !!id;
 
-            // Remove ID from formData so it doesn't get sent as a field
             formData.delete('id'); 
 
             try {
@@ -1368,7 +1752,7 @@
 
                 const response = await fetch(url, {
                     method: method,
-                    headers: { 'Authorization': `Bearer ${token}` }, // No Content-Type for FormData
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
                 });
 
@@ -1385,10 +1769,8 @@
             }
         });
 
-        // 5. Delete Category
         window.deleteCategory = async (id) => {
             if(!confirm('Are you sure? Deleting a category might affect products attached to it.')) return;
-            
             const token = localStorage.getItem('admin_token');
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
@@ -1408,12 +1790,11 @@
         };
 
         // ==========================================
-        // --- ✅ SUBCATEGORY MANAGER LOGIC (NEW) ---
+        // --- ✅ SUBCATEGORY MANAGER LOGIC ---
         // ==========================================
-
         window.openSubCategoryModal = (parentId, parentName) => {
             subCatParentNameDisplay.textContent = parentName;
-            subCatParentIdInput.value = parentId;
+            subCatParentIdInput.value = parentId; 
             subCatAddForm.reset();
             subCatListBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Loading...</td></tr>';
             subCategoryModal.style.display = 'flex';
@@ -1424,11 +1805,10 @@
             subCategoryModal.style.display = 'none';
         };
 
-        const fetchSubCategories = async (parentId) => {
+        const fetchSubCategories = async (categoryId) => {
             const token = localStorage.getItem('admin_token');
             try {
-                // Assuming endpoint: GET /api/admin/subcategories/:parentId
-                const response = await fetch(`${API_BASE_URL}/api/admin/subcategories/${parentId}`, {
+                const response = await fetch(`${API_BASE_URL}/api/admin/subcategories?categoryId=${categoryId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if(!response.ok) throw new Error('Failed to load');
@@ -1463,14 +1843,14 @@
         subCatAddForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = localStorage.getItem('admin_token');
-            const parentId = subCatParentIdInput.value;
+            const categoryId = subCatParentIdInput.value;
             const name = document.getElementById('subcat-new-name').value;
             const imageFile = document.getElementById('subcat-new-image').files[0];
 
             if(!imageFile) { alert("Image is required"); return; }
 
             const formData = new FormData();
-            formData.append('parentId', parentId);
+            formData.append('categoryId', categoryId); 
             formData.append('name', name);
             formData.append('image', imageFile);
 
@@ -1484,7 +1864,7 @@
                 if(!response.ok) throw new Error(data.message || 'Failed to add');
                 
                 subCatAddForm.reset();
-                fetchSubCategories(parentId);
+                fetchSubCategories(categoryId);
             } catch(err) {
                 alert(err.message);
             }
@@ -1600,7 +1980,6 @@
             bannerTitleInput.value = banner.title || '';
             bannerPositionSelect.value = banner.position || 'top'; 
             bannerActiveSelect.value = banner.isActive ? 'true' : 'false';
-            // Set section if available
             if(banner.section) {
                 document.getElementById('banner-section').value = banner.section;
             }
@@ -1639,7 +2018,7 @@
             const title = bannerTitleInput.value;
             const position = bannerPositionSelect.value;
             const isActive = bannerActiveSelect.value;
-            const section = document.getElementById('banner-section').value; // New Field
+            const section = document.getElementById('banner-section').value;
 
             if (!isEditMode && !mediaFile) {
                 bannerUploadError.textContent = "Please select an image file for a new banner.";
@@ -1651,7 +2030,7 @@
             formData.append('link', title || ''); 
             formData.append('position', position); 
             formData.append('isActive', isActive);
-            formData.append('section', section); // Append Section
+            formData.append('section', section);
             formData.append('type', 'image');
 
             try {
@@ -1966,7 +2345,6 @@
                 const statusClass = 'status-pending';
                 const displayStatus = req.status;
                 
-                // Parse and highlight UPI ID if present in notes
                 let notes = req.notes || 'No details provided';
                 
                 if (notes.includes("VPA:")) {
@@ -2075,7 +2453,7 @@
         };
 
         // ==========================================
-        // --- 🚖 DRIVER MONITORING LOGIC (NEW) ---
+        // --- 🚖 DRIVER MONITORING LOGIC ---
         // ==========================================
         const fetchDriversStatus = async () => {
             const token = localStorage.getItem('admin_token');
@@ -2120,11 +2498,16 @@
                             ${driver.locked}
                         </span>
                     </td>
-                    <td>
-                        <button class="btn ${isLocked ? 'btn-success' : 'btn-danger'}" 
+                    <td style="display: flex; gap: 5px;">
+                        <button class="btn ${isLocked ? 'btn-success' : 'btn-warning'}" 
                                 style="padding: 6px 12px; font-size: 0.8rem;" 
-                                onclick="toggleDriverBlock('${driver.id}', ${isLocked})">
+                                onclick="openBlockMapModal('${driver.id}', '${driver.location || 'Unknown'}', ${isLocked})">
                             ${isLocked ? 'Unlock' : 'Block'}
+                        </button>
+                        <button class="btn btn-danger" 
+                                style="padding: 6px 12px; font-size: 0.8rem;" 
+                                onclick="punishDriver('${driver.id}')">
+                            👮 Punish
                         </button>
                     </td>
                 `;
@@ -2132,39 +2515,101 @@
             });
         };
 
-        const toggleDriverBlock = async (driverId, currentlyLocked) => {
-            const action = currentlyLocked ? 'unblock' : 'block';
-            if(!confirm(`Are you sure you want to ${action.toUpperCase()} this driver?`)) return;
+        // --- Driver Block Map Modal Logic ---
+        const openBlockMapModal = (driverId, locationStr, isCurrentlyLocked) => {
+            targetDriverId = driverId;
+            targetDriverAction = isCurrentlyLocked ? 'unblock' : 'block';
+            
+            const confirmBtn = document.getElementById('confirm-block-driver-btn');
+            confirmBtn.innerText = isCurrentlyLocked ? 'Confirm Unlock' : 'Confirm Block';
+            confirmBtn.className = isCurrentlyLocked ? 'btn btn-success' : 'btn btn-danger';
+
+            // Setup Map Link
+            const mapLink = document.getElementById('driver-map-link');
+            if(locationStr === 'Unknown' || !locationStr.includes(',')) {
+                mapLink.href = '#';
+                mapLink.innerText = 'Location Unavailable';
+                mapLink.style.pointerEvents = 'none';
+                mapLink.style.opacity = '0.5';
+            } else {
+                const parts = locationStr.split(',').map(s => s.trim());
+                mapLink.href = `http://googleusercontent.com/maps.google.com/5{parts[0]},${parts[1]}`;
+                mapLink.innerText = '📍 View Location on Google Maps';
+                mapLink.style.pointerEvents = 'auto';
+                mapLink.style.opacity = '1';
+            }
+
+            driverMapModal.style.display = 'flex';
+        };
+
+        const closeBlockDriverModal = () => {
+            driverMapModal.style.display = 'none';
+            targetDriverId = null;
+        };
+
+        document.getElementById('confirm-block-driver-btn').addEventListener('click', async () => {
+            if(!targetDriverId || !targetDriverAction) return;
 
             const token = localStorage.getItem('admin_token');
             try {
-                const response = await fetch(`${API_BASE_URL}/api/admin/drivers/${driverId}/block`, {
+                const response = await fetch(`${API_BASE_URL}/api/admin/drivers/${targetDriverId}/block`, {
                     method: 'PUT',
                     headers: { 
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}` 
                     },
-                    body: JSON.stringify({ action: action })
+                    body: JSON.stringify({ action: targetDriverAction })
                 });
 
                 if(!response.ok) throw new Error('Action failed');
                 
-                alert(`Driver ${action}ed successfully.`);
-                fetchDriversStatus(); // Refresh table
+                alert(`Driver ${targetDriverAction}ed successfully.`);
+                closeBlockDriverModal();
+                fetchDriversStatus(); 
+            } catch(err) {
+                alert(err.message);
+            }
+        });
+
+        const punishDriver = async (driverId) => {
+            const actionType = prompt(
+                "Enter punishment type:\n\nType 'temp' for 48-Hour Ban\nType 'perm' for Permanent Ban"
+            );
+
+            if (actionType !== 'temp' && actionType !== 'perm') return;
+
+            const reason = prompt("Enter Reason for punishment:");
+            if(!reason) return alert("Reason is required!");
+
+            const apiAction = actionType === 'temp' ? 'temp_ban' : 'perm_ban';
+            const token = localStorage.getItem('admin_token');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/drivers/${driverId}/punish`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ action: apiAction, reason: reason })
+                });
+
+                if(!response.ok) throw new Error('Punishment failed');
+                
+                alert(`Driver punished successfully: ${apiAction}`);
+                fetchDriversStatus();
             } catch(err) {
                 alert(err.message);
             }
         };
 
         // ==========================================
-        // --- 🚨 SOS ALERT LOGIC (NEW) ---
+        // --- 🚨 SOS ALERT LOGIC ---
         // ==========================================
         const fetchSOSAlerts = async () => {
             const token = localStorage.getItem('admin_token');
             sosTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Scanning for alerts...</td></tr>';
 
-            // NOTE: In a real system, you would fetch from /api/admin/sos.
-            // Since we are using Complaints for now, we filter those.
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/complaints`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -2173,7 +2618,6 @@
                 if (!response.ok) throw new Error('Failed to load alerts');
                 
                 const allComplaints = await response.json();
-                // Filter for "SOS" or high priority items
                 const sosAlerts = allComplaints.filter(c => 
                     c.reason && (c.reason.toLowerCase().includes('sos') || c.reason.toLowerCase().includes('emergency'))
                 );
@@ -2194,9 +2638,9 @@
 
             alerts.forEach(alert => {
                 const tr = document.createElement('tr');
-                tr.classList.add('sos-row'); // Apply red background style
+                tr.classList.add('sos-row'); 
                 
-                const mapLink = alert.ride ? `https://www.google.com/maps/search/?api=1&query=${alert.ride.dropLocation?.coordinates[1]},${alert.ride.dropLocation?.coordinates[0]}` : '#';
+                const mapLink = alert.ride ? `http://googleusercontent.com/maps.google.com/6{alert.ride.dropLocation?.coordinates[1]},${alert.ride.dropLocation?.coordinates[0]}` : '#';
 
                 tr.innerHTML = `
                     <td><span class="status-badge status-emergency">🚨 SOS</span></td>
@@ -2230,8 +2674,6 @@
         // ==========================================
         // --- Affiliate Marketing Functions ---
         // ==========================================
-
-        // Elements
         const affiliateForm = document.getElementById('affiliate-form');
         const affiliateListContainer = document.getElementById('affiliate-list-container');
         const affError = document.getElementById('affiliate-error');
@@ -2239,7 +2681,6 @@
         const affCancelBtn = document.getElementById('aff-cancel-btn');
         const editAffIdInput = document.getElementById('edit-affiliate-id');
 
-        // 1. Fetch Products
         const fetchAffiliateProducts = async () => {
             const token = localStorage.getItem('admin_token');
             if (!token) return handleLogout();
@@ -2258,7 +2699,6 @@
             }
         };
 
-        // 2. Render Products
         const renderAffiliateProducts = (products) => {
             affiliateListContainer.innerHTML = '';
             if (!products || products.length === 0) {
@@ -2294,7 +2734,6 @@
             });
         };
 
-        // 3. Handle Form Submit
         affiliateForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             affError.classList.add('hidden');
@@ -2335,7 +2774,6 @@
             }
         });
 
-        // 4. Edit Mode
         window.handleEditAffiliate = (prodDataString) => {
             const prod = JSON.parse(decodeURIComponent(prodDataString));
             editAffIdInput.value = prod._id;
@@ -2357,7 +2795,6 @@
             affiliateForm.scrollIntoView({ behavior: 'smooth' });
         };
 
-        // 5. Delete Product
         window.handleDeleteAffiliate = async (id) => {
             if(!confirm('Are you sure you want to delete this product?')) return;
             const token = localStorage.getItem('admin_token');
@@ -2378,7 +2815,6 @@
             }
         };
 
-        // 6. Reset Form
         const resetAffiliateForm = () => {
             affiliateForm.reset();
             editAffIdInput.value = '';
@@ -2444,7 +2880,12 @@
         notificationForm.addEventListener('submit', handleNotificationSend);
         confirmApprovalBtn.addEventListener('click', handleApproveReturn);
         closeModalBtn.addEventListener('click', closeApproveReturnModal);
-        window.onclick = (event) => { if (event.target === assignDeliveryModal) closeApproveReturnModal(); };
+        
+        window.onclick = (event) => { 
+            if (event.target === assignDeliveryModal) closeApproveReturnModal();
+            if (event.target === driverMapModal) closeBlockDriverModal();
+            if (event.target === document.getElementById('zone-map-modal')) closeZoneMapModal();
+        };
         
         window.handleDeleteCoupon = handleDeleteCoupon;
         window.openApproveReturnModal = openApproveReturnModal;
