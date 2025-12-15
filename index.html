@@ -923,7 +923,26 @@
                                 <small style="color:#666;">Max distance allowed for orders. Set 0 to disable radius check.</small>
                             </div>
                         </div>
-                    </div>
+                        
+                        <h4 style="margin-top: 15px; margin-bottom: 10px; color: #374151;">Dynamic Delivery Pricing</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Base Charge (₹)</label>
+                                <input type="number" id="setting-base-charge" placeholder="e.g. 20">
+                                <small style="color:#666;">Fixed fee for initial distance.</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Base Distance (KM)</label>
+                                <input type="number" id="setting-base-km" placeholder="e.g. 2">
+                                <small style="color:#666;">Distance covered by Base Charge.</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Extra Fee Per KM (₹)</label>
+                                <input type="number" id="setting-per-km-charge" placeholder="e.g. 10">
+                                <small style="color:#666;">Charge for every KM after Base Dist.</small>
+                            </div>
+                        </div>
+                        </div>
 
                     <div class="card">
                         <h2>App Design Theme (Dynamic Colors)</h2>
@@ -1316,7 +1335,7 @@
         });
 
         // ==========================================
-        // --- ✅ APP SETTINGS LOGIC ---
+        // --- ✅ APP SETTINGS LOGIC (UPDATED) ---
         // ==========================================
         const fetchAppSettings = async () => {
             const token = localStorage.getItem('admin_token');
@@ -1332,12 +1351,19 @@
                 if(document.getElementById('setting-product-fee'))
                     document.getElementById('setting-product-fee').value = data.productCreationFee || 10;
 
-                // ✅ Populate Delivery Config (Radius, Pincodes, Zones)
-                // Note: These IDs exist in the new "locations-section" as well
+                // ✅ Populate Delivery Config (Radius, Pincodes, Zones, Pricing)
                 if (data.deliveryConfig) {
                     if(document.getElementById('setting-radius'))
                         document.getElementById('setting-radius').value = data.deliveryConfig.globalRadiusKm || 0;
                     
+                    // NEW: Populate Dynamic Pricing Fields
+                    if(document.getElementById('setting-base-charge'))
+                        document.getElementById('setting-base-charge').value = data.deliveryConfig.baseCharge || 20;
+                    if(document.getElementById('setting-base-km'))
+                        document.getElementById('setting-base-km').value = data.deliveryConfig.baseKm || 2;
+                    if(document.getElementById('setting-per-km-charge'))
+                        document.getElementById('setting-per-km-charge').value = data.deliveryConfig.extraPerKmCharge || 10;
+
                     // Populate Blocked Pincodes (Array -> Comma String)
                     if(document.getElementById('setting-blocked-pincodes')) {
                         if(data.deliveryConfig.blockedPincodes && data.deliveryConfig.blockedPincodes.length > 0) {
@@ -1383,13 +1409,26 @@
             const blockedPinsEl = document.getElementById('setting-blocked-pincodes'); 
             const blockedZonesEl = document.getElementById('setting-blocked-zones'); 
             
+            // New Pricing Elements
+            const baseChargeEl = document.getElementById('setting-base-charge');
+            const baseKmEl = document.getElementById('setting-base-km');
+            const perKmChargeEl = document.getElementById('setting-per-km-charge');
+
             const themePrimary = document.getElementById('theme-primary');
             
             const payload = {};
 
             if(commissionEl) payload.platformCommissionRate = commissionEl.value;
             if(productFeeEl) payload.productCreationFee = productFeeEl.value;
+            
+            // Delivery Radius
             if(radiusEl) payload.deliveryRadius = radiusEl.value;
+            
+            // Delivery Pricing (Send to backend update route)
+            if(baseChargeEl) payload.deliveryBaseCharge = baseChargeEl.value;
+            if(baseKmEl) payload.deliveryBaseKm = baseKmEl.value;
+            if(perKmChargeEl) payload.deliveryPerKmCharge = perKmChargeEl.value;
+
             if(blockedPinsEl) payload.blockedPincodes = blockedPinsEl.value;
             if(blockedZonesEl) payload.blockedZones = blockedZonesEl.value;
 
