@@ -111,7 +111,7 @@
             <input id="qr-text" type="text" placeholder="QR code text">
             <select id="sizes">
                 <optgroup label="GS">
-                    <option value="P10323637010600BC39000800H002.09.2024000400">bleed screw</option>
+                    <option value="P10323637010600BC39000800H002.04.2024000400">bleed screw</option>
                     <option value="P103164400308004BC5861B001069420-B001000000">CKD seal piston</option>
                     <option value="P10311001010800BC38002400F24020626001000250">LOCAL SEAL PISTON</option>
                     <option value="P103230760108000003BC4418E0010722093C000200">BOOT PISTON</option>
